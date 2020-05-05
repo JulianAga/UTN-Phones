@@ -1,4 +1,4 @@
-CREATE DATABASE utn_phones;
+CREATE DATABASE IF NOT EXISTS utn_phones;
 USE utn_phones;
 
 CREATE TABLE line_types(
