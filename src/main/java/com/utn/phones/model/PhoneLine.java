@@ -1,5 +1,6 @@
 package com.utn.phones.model;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -25,7 +26,7 @@ import lombok.ToString;
 @Entity
 @ToString
 @Table(name = "phone_lines")
-public class PhoneLine {
+public class PhoneLine  implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,20 +36,20 @@ public class PhoneLine {
   private String number;
 
   @NotNull
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "line_type")
   private LineType lineType;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "originLine")
-  @ToString.Exclude
-  private List<Call> originLines;
+//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "originLine")
+//  @ToString.Exclude
+//  private List<Call> originLines;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "destinyLine")
-  @ToString.Exclude
-  private List<Call> destinyLines;
+//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "destinyLine")
+//  @ToString.Exclude
+//  private List<Call> destinyLines;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "phoneLine")
-  @ToString.Exclude
-  private List<Bill> bills;
+//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "phoneLine")
+//  @ToString.Exclude
+//  private List<Bill> bills;
 
 }

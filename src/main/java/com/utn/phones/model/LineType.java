@@ -1,5 +1,6 @@
 package com.utn.phones.model;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -23,7 +24,7 @@ import lombok.ToString;
 @Entity
 @ToString
 @Table(name = "line_types")
-public class LineType {
+public class LineType  implements Serializable {
 
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
@@ -32,7 +33,7 @@ public class LineType {
   @NotNull
   private String type;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "lineType")
-  @ToString.Exclude
-  private List<PhoneLine> phoneLines;
+//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "lineType")
+//  @ToString.Exclude
+//  private List<PhoneLine> phoneLines;
 }

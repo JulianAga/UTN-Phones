@@ -15,6 +15,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -22,7 +24,7 @@ import lombok.ToString;
 @Entity
 @ToString
 @Table(name = "tariffs")
-public class Tariff {
+public class Tariff  implements Serializable {
 
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id

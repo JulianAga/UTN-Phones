@@ -1,16 +1,11 @@
 package com.utn.phones.model;
 
+import java.io.Serializable;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,20 +18,20 @@ import lombok.ToString;
 @Data
 @Entity
 @ToString
-@Table(name = "users")
-public class UserType {
+@Table(name = "user_types")
+public class UserType  implements Serializable{
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @NotNull
   private Integer id;
 
-  @JoinColumn(name = "type")
   @NotNull
   private String type;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "userType")
-  @ToString.Exclude
-  private List<User> users;
+//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "userType")
+//  @ToString.Exclude
+//  @JsonBackReference
+//  private List<User> users;
 
 }

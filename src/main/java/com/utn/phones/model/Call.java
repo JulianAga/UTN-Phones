@@ -1,5 +1,6 @@
 package com.utn.phones.model;
 
+import java.io.Serializable;
 import java.sql.Time;
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
@@ -24,7 +25,7 @@ import lombok.ToString;
 @Entity
 @ToString
 @Table(name = "calls")
-public class Call {
+public class Call  implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

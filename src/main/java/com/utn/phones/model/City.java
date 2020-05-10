@@ -1,17 +1,11 @@
 package com.utn.phones.model;
 
+import java.io.Serializable;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +19,7 @@ import lombok.ToString;
 @Entity
 @ToString
 @Table(name = "cities")
-public class City {
+public class City implements Serializable{
 
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
@@ -38,27 +32,32 @@ public class City {
   private String name;
 
   @NotNull
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "province")
+  @ManyToOne
+  @JoinColumn(name = "province_id")
   private Province province;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "city")
-  @ToString.Exclude
-  private List<User> users;
+//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "city")
+//  @ToString.Exclude
+//  @JsonBackReference
+//  private List<User> users;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "originCity")
-  @ToString.Exclude
-  private List<Call> originCalls;
+//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "originCity")
+//  @ToString.Exclude
+//  @JsonBackReference
+//  private List<Call> originCalls;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "destinyCity")
-  @ToString.Exclude
-  private List<Call> destinyCalls;
+//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "destinyCity")
+//  @ToString.Exclude
+//  @JsonBackReference
+//  private List<Call> destinyCalls;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "originCity")
-  @ToString.Exclude
-  private List<Tariff> originCity;
+//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "originCity")
+//  @ToString.Exclude
+//  @JsonBackReference
+//  private List<Tariff> originCity;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "destinyCity")
-  @ToString.Exclude
-  private List<Tariff> destinyCity;
+//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "destinyCity")
+//  @ToString.Exclude
+//  @JsonBackReference
+//  private List<Tariff> destinyCity;
 }
