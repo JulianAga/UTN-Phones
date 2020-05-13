@@ -65,7 +65,7 @@ CREATE TABLE bills(
     quantity_of_calls INT,
     cost_price FLOAT,
     total_price FLOAT,
-    date DATE, 
+    date DATE,
     expiring_date DATE,
     client INT,
     phone_line INT,
@@ -126,3 +126,4 @@ CALL add_city("Buenos Aires", "Mar del Plata", 223);
 INSERT INTO provinces (name) VALUES ("Buenos Aires"), ("Catamarca"), ("Chaco"), ("Chubut"), ("Córdoba"), ("Corrientes"), ("Entre Ríos"), ("Formosa"), ("Jujuy"), ("La Pampa"), ("La Rioja"), ("Mendoza"), ("Misiones"), ("Neuquén"), ("Rio Negro"), ("Salta"), ("San Juan"), ("San Luis"), ("Santa Cruz"), ("Santa Fé"), ("Santiago del Estero"), ("Tierra del Fuego"), ("Tucumán");
 INSERT INTO line_types (type) VALUES ("home"), ("mobile");
 INSERT INTO user_types (type) VALUES ("client"), ("employee");
+

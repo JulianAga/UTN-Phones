@@ -24,7 +24,7 @@ import java.io.Serializable;
 @Entity
 @ToString
 @Table(name = "tariffs")
-public class Tariff  implements Serializable {
+public class Tariff {
 
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id

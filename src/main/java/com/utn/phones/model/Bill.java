@@ -1,15 +1,22 @@
 package com.utn.phones.model;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
-import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,27 +25,31 @@ import lombok.ToString;
 @Entity
 @ToString
 @Table(name = "bills")
-public class Bill  implements Serializable {
+public class Bill {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "phone_line")
-  private PhoneLine phoneLine;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "phone_line")
+    private PhoneLine phoneLine;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
-  private Integer quantityOfCalls;
+    @Column(name = "quantity_of_calls")
+    private Integer quantityOfCalls;
 
-  private Float costPrice;
+    @Column(name = "cost_price")
+    private Float costPrice;
 
-  private Float totalPrice;
+    @Column(name = "total_price")
+    private Float totalPrice;
 
-  private LocalDateTime date;
+    private LocalDateTime date;
 
-  private LocalDateTime expiringDate;
+    @Column(name = "expiring_date")
+    private LocalDateTime expiringDate;
 
 }
