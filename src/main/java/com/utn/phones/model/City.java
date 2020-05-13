@@ -19,7 +19,7 @@ import lombok.ToString;
 @Entity
 @ToString
 @Table(name = "cities")
-public class City implements Serializable{
+public class City{
 
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
@@ -36,28 +36,4 @@ public class City implements Serializable{
   @JoinColumn(name = "province_id")
   private Province province;
 
-//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "city")
-//  @ToString.Exclude
-//  @JsonBackReference
-//  private List<User> users;
-
-//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "originCity")
-//  @ToString.Exclude
-//  @JsonBackReference
-//  private List<Call> originCalls;
-
-//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "destinyCity")
-//  @ToString.Exclude
-//  @JsonBackReference
-//  private List<Call> destinyCalls;
-
-//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "originCity")
-//  @ToString.Exclude
-//  @JsonBackReference
-//  private List<Tariff> originCity;
-
-//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "destinyCity")
-//  @ToString.Exclude
-//  @JsonBackReference
-//  private List<Tariff> destinyCity;
 }

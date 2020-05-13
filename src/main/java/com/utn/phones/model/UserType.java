@@ -19,7 +19,7 @@ import lombok.ToString;
 @Entity
 @ToString
 @Table(name = "user_types")
-public class UserType  implements Serializable{
+public class UserType {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,10 +28,5 @@ public class UserType  implements Serializable{
 
   @NotNull
   private String type;
-
-//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "userType")
-//  @ToString.Exclude
-//  @JsonBackReference
-//  private List<User> users;
 
 }

@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Entity
 @ToString
 @Table(name = "users")
-public class User  implements Serializable {
+public class User {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -41,11 +41,8 @@ public class User  implements Serializable {
 
     @NotNull
     @ManyToOne
+    @JoinColumn(name = "city")
     private City city;
-
-//  @NotNull
-//  @ManyToOne(fetch = FetchType.LAZY)
-//  private Province province;
 
     @NotNull
     @ManyToOne

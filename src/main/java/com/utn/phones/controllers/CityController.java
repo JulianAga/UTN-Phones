@@ -1,7 +1,7 @@
 package com.utn.phones.controllers;
 
-import com.utn.phones.model.User;
-import com.utn.phones.services.UserService;
+import com.utn.phones.model.City;
+import com.utn.phones.services.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,18 +10,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-
-@RequestMapping("/user")
-public class UserController {
-    private UserService userService;
+@RequestMapping("/city")
+public class CityController {
+    CityService cityService;
 
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public CityController(CityService cityService) {
+        this.cityService = cityService;
     }
 
     @GetMapping("/")
-    public List<User> findAll(){
-        return this.userService.findAll();
+    public List<City> findAll() {
+        return this.cityService.findAll();
     }
 }

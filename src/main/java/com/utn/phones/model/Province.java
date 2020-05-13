@@ -27,7 +27,7 @@ import lombok.ToString;
 @Entity
 @ToString
 @Table(name = "provinces")
-public class Province implements Serializable{
+public class Province {
 
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
@@ -36,15 +36,5 @@ public class Province implements Serializable{
   @NotNull
   @JsonProperty(value = "name")
   private String name;
-
-//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "province")
-//  @ToString.Exclude
-//  @JsonBackReference
-//  private List<User> users;
-//
-//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "province")
-//  @ToString.Exclude
-//  @JsonBackReference
-//  private List<City> cities;
 
 }

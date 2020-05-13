@@ -25,7 +25,7 @@ import lombok.ToString;
 @Entity
 @ToString
 @Table(name = "calls")
-public class Call  implements Serializable {
+public class Call{
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

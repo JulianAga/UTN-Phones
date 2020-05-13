@@ -26,7 +26,7 @@ import lombok.ToString;
 @Entity
 @ToString
 @Table(name = "phone_lines")
-public class PhoneLine  implements Serializable {
+public class PhoneLine {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,17 +39,5 @@ public class PhoneLine  implements Serializable {
   @ManyToOne
   @JoinColumn(name = "line_type")
   private LineType lineType;
-
-//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "originLine")
-//  @ToString.Exclude
-//  private List<Call> originLines;
-
-//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "destinyLine")
-//  @ToString.Exclude
-//  private List<Call> destinyLines;
-
-//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "phoneLine")
-//  @ToString.Exclude
-//  private List<Bill> bills;
 
 }

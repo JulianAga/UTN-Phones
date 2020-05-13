@@ -24,7 +24,7 @@ import lombok.ToString;
 @Entity
 @ToString
 @Table(name = "line_types")
-public class LineType  implements Serializable {
+public class LineType {
 
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
@@ -33,7 +33,4 @@ public class LineType  implements Serializable {
   @NotNull
   private String type;
 
-//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "lineType")
-//  @ToString.Exclude
-//  private List<PhoneLine> phoneLines;
 }

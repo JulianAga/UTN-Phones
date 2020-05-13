@@ -1,14 +1,21 @@
-CREATE DATABASE IF NOT EXISTS utn_phones;
+CREATE DATABASE utn_phones;
+drop database utn_phones;
 USE utn_phones;
 
+select * from USERS;
+SELECT * FROM PROVINCES;
+SELECT * FROM CITIES;
+select * from user_types;
+select * from bills;
+
 CREATE TABLE line_types(
-	id INT, 
+	id INT AUTO_INCREMENT,
     type VARCHAR(30),
     CONSTRAINT pk_id_line_type PRIMARY KEY (id)
 );
 
 CREATE TABLE phone_lines(
-	id INT,
+	id INT AUTO_INCREMENT,
     number VARCHAR(9) UNIQUE,
     line_type INT,
     CONSTRAINT pk_id_phone_line PRIMARY KEY (id),
@@ -16,13 +23,13 @@ CREATE TABLE phone_lines(
 );
 
 CREATE TABLE provinces(
-	id INT,
+	id INT AUTO_INCREMENT,
     name VARCHAR(30) UNIQUE,
     CONSTRAINT pk_id_province PRIMARY KEY (id)
 );
 
 CREATE TABLE cities(
-	id INT,
+	id INT AUTO_INCREMENT,
     prefix INT(3) UNIQUE,
     name VARCHAR(30) UNIQUE,
     province INT,
@@ -31,13 +38,13 @@ CREATE TABLE cities(
 );
 
 CREATE TABLE user_types(
-	id INT,
+	id INT AUTO_INCREMENT,
     type VARCHAR(30),
     CONSTRAINT pk_id_user_type PRIMARY KEY (id)
 );
 
 CREATE TABLE users(
-	id INT,
+	id INT AUTO_INCREMENT,
     dni VARCHAR(9) UNIQUE,
     username VARCHAR(30) UNIQUE,
     password VARCHAR(30),
@@ -53,11 +60,11 @@ CREATE TABLE users(
 );
 
 CREATE TABLE bills(
-	id INT,
+	id INT AUTO_INCREMENT,
     quantity_of_calls INT,
     cost_price FLOAT,
     total_price FLOAT,
-    date DATE, 
+    date DATE,
     expiring_date DATE,
     client INT,
     phone_line INT,
@@ -76,7 +83,7 @@ CREATE TABLE tariffs(
 );
 
 CREATE TABLE calls(
-	id INT,
+	id INT AUTO_INCREMENT,
     price_per_minute FLOAT,
     duration TIME,
     date DATETIME,
@@ -96,3 +103,19 @@ CREATE TABLE calls(
     CONSTRAINT fk_destiny_city2 FOREIGN KEY (destiny_city) REFERENCES cities (id),
     CONSTRAINT fk_id_bill FOREIGN KEY (bill) REFERENCES bills (id)
 );
+
+
+/* Procedures */
+
+DELIMITER $$
+CREATE PROCEDURE add_city(IN province VARCHAR(30),IN city VARCHAR(30),IN prefix INT)
+BEGIN
+    DECLARE province_id INT;
+    SELECT id INTO province_id FROM provinces AS p WHERE p.name = province;
+    INSERT INTO cities(name,prefix,province) VALUES (city,prefix,province_id);
+END;
+$$
+
+/* Default Inserts */
+
+INSERT INTO provinces (name) VALUES ("Buenos Aires"), ("Catamarca"), ("Chaco"), ("Chubut"), ("Córdoba"), ("Corrientes"), ("Entre Ríos"), ("Formosa"), ("Jujuy"), ("La Pampa"), ("La Rioja"), ("Mendoza"), ("Misiones"), ("Neuquén"), ("Rio Negro"), ("Salta"), ("San Juan"), ("San Luis"), ("Santa Cruz"), ("Santa Fé"), ("Santiago del Estero"), ("Tierra del Fuego"), ("Tucumán");
