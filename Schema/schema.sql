@@ -6,6 +6,7 @@ select * from USERS;
 SELECT * FROM PROVINCES;
 SELECT * FROM CITIES;
 select * from user_types;
+select * from line_types;
 select * from bills;
 
 CREATE TABLE line_types(
@@ -30,7 +31,7 @@ CREATE TABLE provinces(
 
 CREATE TABLE cities(
 	id INT AUTO_INCREMENT,
-    prefix INT(3) UNIQUE,
+    prefix INT(5) UNIQUE,
     name VARCHAR(30) UNIQUE,
     province INT,
     CONSTRAINT pk_id_city PRIMARY KEY (id),
@@ -116,6 +117,12 @@ BEGIN
 END; 
 $$
 
+/* Procedures calls */
+
+CALL add_city("Buenos Aires", "Mar del Plata", 223);
+
 /* Default Inserts */
 
 INSERT INTO provinces (name) VALUES ("Buenos Aires"), ("Catamarca"), ("Chaco"), ("Chubut"), ("Córdoba"), ("Corrientes"), ("Entre Ríos"), ("Formosa"), ("Jujuy"), ("La Pampa"), ("La Rioja"), ("Mendoza"), ("Misiones"), ("Neuquén"), ("Rio Negro"), ("Salta"), ("San Juan"), ("San Luis"), ("Santa Cruz"), ("Santa Fé"), ("Santiago del Estero"), ("Tierra del Fuego"), ("Tucumán");
+INSERT INTO line_types (type) VALUES ("home"), ("mobile");
+INSERT INTO user_types (type) VALUES ("client"), ("employee");
