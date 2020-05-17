@@ -8,6 +8,7 @@ SELECT * FROM CITIES;
 select * from user_types;
 select * from line_types;
 select * from bills;
+select * from phone_lines;
 
 CREATE TABLE line_types(
 	id INT AUTO_INCREMENT, 
@@ -22,6 +23,9 @@ CREATE TABLE phone_lines(
     CONSTRAINT pk_id_phone_line PRIMARY KEY (id),
     CONSTRAINT fk_line_type FOREIGN KEY (line_type) REFERENCES line_types (id)
 );
+
+ALTER TABLE phone_lines ADD COLUMN user_id INT;
+ALTER TABLE phone_lines ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users (id);
 
 CREATE TABLE provinces(
 	id INT AUTO_INCREMENT,
