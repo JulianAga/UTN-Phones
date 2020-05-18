@@ -121,6 +121,30 @@ BEGIN
 END; 
 $$
 
+/* Functions */
+
+/*Debería ver que algunos prefijos tienen 4, no 3, por lo que debería hacerlo como Enzo)*/
+DELIMITER $$
+CREATE FUNCTION get_prefix(phone VARCHAR(9)) RETURNS VARCHAR(20)
+BEGIN
+	DECLARE prefix VARCHAR(9);
+    SET prefix= (SELECT SUBSTRING(phone, 1, 3));
+    RETURN prefix;
+END;
+$$
+
+DELIMITER $$
+CREATE PROCEDURE testing()
+BEGIN
+	DECLARE prefix VARCHAR(9);
+	SET prefix= get_prefix(223542694);
+    SELECT prefix;
+END;
+$$
+
+CALL testing;
+DROP PROCEDURE testing;
+
 /* Procedures calls */
 
 CALL add_city("Buenos Aires", "Mar del Plata", 223);
