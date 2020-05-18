@@ -10,22 +10,6 @@ select * from line_types;
 select * from bills;
 select * from phone_lines;
 
-CREATE TABLE line_types(
-	id INT AUTO_INCREMENT, 
-    type VARCHAR(30),
-    CONSTRAINT pk_id_line_type PRIMARY KEY (id)
-);
-
-CREATE TABLE phone_lines(
-	id INT AUTO_INCREMENT,
-    number VARCHAR(9) UNIQUE,
-    line_type INT,
-    CONSTRAINT pk_id_phone_line PRIMARY KEY (id),
-    CONSTRAINT fk_line_type FOREIGN KEY (line_type) REFERENCES line_types (id)
-);
-
-ALTER TABLE phone_lines ADD COLUMN user_id INT;
-ALTER TABLE phone_lines ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users (id);
 
 CREATE TABLE provinces(
 	id INT AUTO_INCREMENT,
@@ -62,6 +46,22 @@ CREATE TABLE users(
     CONSTRAINT fk_id_city FOREIGN KEY (city) REFERENCES cities (id),
     CONSTRAINT fk_id_province2 FOREIGN KEY (province) REFERENCES provinces (id),
     CONSTRAINT fk_user_type FOREIGN KEY (user_type) REFERENCES user_types (id)
+);
+
+CREATE TABLE line_types(
+	id INT AUTO_INCREMENT, 
+    type VARCHAR(30),
+    CONSTRAINT pk_id_line_type PRIMARY KEY (id)
+);
+
+CREATE TABLE phone_lines(
+	id INT AUTO_INCREMENT,
+    number VARCHAR(15) UNIQUE,
+    line_type INT,
+    user_id INT,
+    CONSTRAINT pk_id_phone_line PRIMARY KEY (id),
+    CONSTRAINT fk_line_type FOREIGN KEY (line_type) REFERENCES line_types (id),
+    CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE TABLE bills(
