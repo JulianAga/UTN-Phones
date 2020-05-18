@@ -128,10 +128,32 @@ DELIMITER $$
 CREATE FUNCTION get_prefix(phone VARCHAR(9)) RETURNS VARCHAR(20)
 BEGIN
 	DECLARE prefix VARCHAR(9);
-    SET prefix= (SELECT SUBSTRING(phone, 1, 3));
+    DECLARE x INT default 0;
+	SET x=5;
+    WHILE x<=5 AND x>0 DO
+			SET prefix= (SELECT SUBSTRING(phone, 1, x));
+				IF EXISTS(SELECT prefix FROM cities AS c WHERE c.prefix=prefix) THEN
+					RETURN prefix;
+				END IF;
+                SET x=x-1;
+		END WHILE;
     RETURN prefix;
-END;
+END    
 $$
+
+DROP FUNCTION get_prefix;
+
+/* Procedures calls */
+
+CALL add_city("Buenos Aires", "Mar del Plata", 223);
+
+/* Default Inserts */
+
+INSERT INTO provinces (name) VALUES ("Buenos Aires"), ("Catamarca"), ("Chaco"), ("Chubut"), ("Córdoba"), ("Corrientes"), ("Entre Ríos"), ("Formosa"), ("Jujuy"), ("La Pampa"), ("La Rioja"), ("Mendoza"), ("Misiones"), ("Neuquén"), ("Rio Negro"), ("Salta"), ("San Juan"), ("San Luis"), ("Santa Cruz"), ("Santa Fé"), ("Santiago del Estero"), ("Tierra del Fuego"), ("Tucumán");
+INSERT INTO line_types (type) VALUES ("home"), ("mobile");
+INSERT INTO user_types (type) VALUES ("client"), ("employee");
+
+/* Testing */
 
 DELIMITER $$
 CREATE PROCEDURE testing()
@@ -144,14 +166,3 @@ $$
 
 CALL testing;
 DROP PROCEDURE testing;
-
-/* Procedures calls */
-
-CALL add_city("Buenos Aires", "Mar del Plata", 223);
-
-/* Default Inserts */
-
-INSERT INTO provinces (name) VALUES ("Buenos Aires"), ("Catamarca"), ("Chaco"), ("Chubut"), ("Córdoba"), ("Corrientes"), ("Entre Ríos"), ("Formosa"), ("Jujuy"), ("La Pampa"), ("La Rioja"), ("Mendoza"), ("Misiones"), ("Neuquén"), ("Rio Negro"), ("Salta"), ("San Juan"), ("San Luis"), ("Santa Cruz"), ("Santa Fé"), ("Santiago del Estero"), ("Tierra del Fuego"), ("Tucumán");
-INSERT INTO line_types (type) VALUES ("home"), ("mobile");
-INSERT INTO user_types (type) VALUES ("client"), ("employee");
-
