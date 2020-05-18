@@ -31,9 +31,8 @@ public class City{
   @NotNull
   private String name;
 
-  @NotNull
   @ManyToOne
-  @JoinColumn(name = "province_id")
+  @JoinColumn(name = "province")
   private Province province;
 
 }

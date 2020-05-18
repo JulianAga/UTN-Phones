@@ -8,9 +8,10 @@ SELECT * FROM CITIES;
 select * from user_types;
 select * from line_types;
 select * from bills;
+select * from phone_lines;
 
 CREATE TABLE line_types(
-	id INT AUTO_INCREMENT, 
+	id INT AUTO_INCREMENT,
     type VARCHAR(30),
     CONSTRAINT pk_id_line_type PRIMARY KEY (id)
 );
@@ -22,6 +23,9 @@ CREATE TABLE phone_lines(
     CONSTRAINT pk_id_phone_line PRIMARY KEY (id),
     CONSTRAINT fk_line_type FOREIGN KEY (line_type) REFERENCES line_types (id)
 );
+
+ALTER TABLE phone_lines ADD COLUMN user_id INT;
+ALTER TABLE phone_lines ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users (id);
 
 CREATE TABLE provinces(
 	id INT AUTO_INCREMENT,
@@ -114,7 +118,7 @@ BEGIN
     DECLARE province_id INT;
     SELECT id INTO province_id FROM provinces AS p WHERE p.name = province;
     INSERT INTO cities(name,prefix,province) VALUES (city,prefix,province_id);
-END; 
+END;
 $$
 
 /* Procedures calls */
@@ -126,4 +130,3 @@ CALL add_city("Buenos Aires", "Mar del Plata", 223);
 INSERT INTO provinces (name) VALUES ("Buenos Aires"), ("Catamarca"), ("Chaco"), ("Chubut"), ("Córdoba"), ("Corrientes"), ("Entre Ríos"), ("Formosa"), ("Jujuy"), ("La Pampa"), ("La Rioja"), ("Mendoza"), ("Misiones"), ("Neuquén"), ("Rio Negro"), ("Salta"), ("San Juan"), ("San Luis"), ("Santa Cruz"), ("Santa Fé"), ("Santiago del Estero"), ("Tierra del Fuego"), ("Tucumán");
 INSERT INTO line_types (type) VALUES ("home"), ("mobile");
 INSERT INTO user_types (type) VALUES ("client"), ("employee");
-
