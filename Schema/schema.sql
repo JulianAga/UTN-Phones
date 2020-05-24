@@ -124,7 +124,7 @@ $$
 /* Functions */
 
 DELIMITER $$
-CREATE FUNCTION get_prefix(phone VARCHAR(9)) RETURNS VARCHAR(20)
+CREATE FUNCTION get_prefix(phone VARCHAR(20)) RETURNS VARCHAR(9)
 BEGIN
 	DECLARE prefix VARCHAR(9);
     DECLARE x INT default 0;
@@ -140,12 +140,31 @@ BEGIN
 END    
 $$
 
+DROP FUNCTION get_prefix;
+
 DELIMITER $$
 CREATE FUNCTION get_city_from_prefix(prefix VARCHAR(9)) RETURNS INT
 BEGIN
 	DECLARE city_id INT;
     SET city_id= (SELECT c.id FROM cities AS c WHERE c.prefix=prefix);
     RETURN city_id;
+END
+$$
+
+DELIMITER $$
+CREATE FUNCTION get_city_from_number(number VARCHAR(15)) RETURNS INT
+BEGIN
+	DECLARE prefix VARCHAR(9);
+    DECLARE city_id INT;
+    SET prefix= get_prefix(number);
+    SET city_id= get_city_from_prefix(prefix);
+    RETURN city_id;
+END
+$$
+
+DELIMITER $$
+CREATE FUNCTION get_id_phone_by_number(number VARCHAR(15)) RETURNS INT
+BEGIN
 END
 $$
 
@@ -168,8 +187,7 @@ CREATE PROCEDURE testing()
 BEGIN
 	DECLARE prefix VARCHAR(9);
 	DECLARE city_id INT;
-	SET prefix= get_prefix(223542694);
-    SET city_id= get_city_from_prefix(prefix);
+    SET city_id= get_city_from_number(223542694);
     SELECT city_id;
 END;
 $$
