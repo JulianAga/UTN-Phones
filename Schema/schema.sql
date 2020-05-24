@@ -123,7 +123,6 @@ $$
 
 /* Functions */
 
-/*Debería ver que algunos prefijos tienen 4, no 3, por lo que debería hacerlo como Enzo)*/
 DELIMITER $$
 CREATE FUNCTION get_prefix(phone VARCHAR(9)) RETURNS VARCHAR(20)
 BEGIN
@@ -141,7 +140,16 @@ BEGIN
 END    
 $$
 
-DROP FUNCTION get_prefix;
+DELIMITER $$
+CREATE FUNCTION get_city_from_prefix(prefix VARCHAR(9)) RETURNS INT
+BEGIN
+	DECLARE city_id INT;
+    SET city_id= (SELECT c.id FROM cities AS c WHERE c.prefix=prefix);
+    RETURN city_id;
+END
+$$
+
+DROP FUNCTION get_city_from_prefix;
 
 /* Procedures calls */
 
@@ -159,8 +167,10 @@ DELIMITER $$
 CREATE PROCEDURE testing()
 BEGIN
 	DECLARE prefix VARCHAR(9);
+	DECLARE city_id INT;
 	SET prefix= get_prefix(223542694);
-    SELECT prefix;
+    SET city_id= get_city_from_prefix(prefix);
+    SELECT city_id;
 END;
 $$
 
