@@ -9,6 +9,7 @@ select * from user_types;
 select * from line_types;
 select * from bills;
 select * from phone_lines;
+select * from tariffs;
 
 
 CREATE TABLE provinces(
@@ -120,6 +121,15 @@ BEGIN
 END
 $$
 
+/* DELIMITER $$
+CREATE PROCEDURE add_call(IN origin_number VARCHAR(15), IN destiny_number VARCHAR(15), IN duration TIME, IN date DATETIME)
+BEGIN
+	DECLARE origin_city INT;
+    DECLARE destiny_city INT;
+    
+END
+$$
+*/
 /* Functions */
 
 DELIMITER %%
@@ -181,6 +191,16 @@ BEGIN
 END
 $$
 
+DELIMITER //
+CREATE FUNCTION get_price_per_minute (origin_city INT, destiny_city INT) RETURNS FLOAT
+BEGIN
+	DECLARE price_per_minute FLOAT;
+    SET price_per_minute= (SELECT t.price_per_minute FROM tariffs AS t WHERE t.origin_city=origin_city AND t.destiny_city=destiny_city);
+    RETURN price_per_minute;
+END
+//
+
+
 
 /* Default Inserts */
 
@@ -197,6 +217,7 @@ CALL add_city("Buenos Aires", "Buenos Aires", 11);
 
 INSERT INTO users (dni, username, password, name, surname, city, user_type) VALUES ("41715326", "florchiexco", "123", "Florencia", "Excoffon", 1, 1);
 INSERT INTO phone_lines (number, line_type, user_id) VALUES ("113542694", 1, 1);
+INSERT INTO tariffs (origin_city, destiny_city, price_per_minute, cost_price) VALUES (1, 2, 1.5, 1);
 
 DELIMITER $$
 CREATE PROCEDURE testing()
@@ -204,9 +225,12 @@ BEGIN
 	DECLARE city_id INT;
     DECLARE phone_id INT;
     DECLARE user INT;
+    DECLARE price_per_minute FLOAT;
+    SET price_per_minute= get_price_per_minute(1, 2);
     SET city_id= get_city_from_number(113542694);
     SET phone_id= get_id_phone_by_number(113542694);
     SET user= get_user_from_number(113542694);
+    SELECT price_per_minute;
     SELECT user;
     SELECT city_id;
     SELECT phone_id;
