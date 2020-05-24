@@ -42,4 +42,5 @@ public class PhoneLine {
   @JsonBackReference
   private Client client;
 
+  private Boolean suspended;
 }
