@@ -118,15 +118,15 @@ BEGIN
     DECLARE province_id INT;
     SELECT id INTO province_id FROM provinces AS p WHERE p.name = province;
     INSERT INTO cities(name,prefix,province) VALUES (city,prefix,province_id);
-END; 
+END
 $$
 
 /* Functions */
 
-DELIMITER $$
+DELIMITER %%
 CREATE FUNCTION get_prefix(phone VARCHAR(20)) RETURNS VARCHAR(9)
 BEGIN
-	DECLARE prefix VARCHAR(9);
+	DECLARE prefix INT;
     DECLARE x INT default 0;
 	SET x=5;
     WHILE x<=5 AND x>0 DO
@@ -138,29 +138,29 @@ BEGIN
 		END WHILE;
     RETURN prefix;
 END    
-$$
+%%
 
 DROP FUNCTION get_prefix;
 
-DELIMITER $$
-CREATE FUNCTION get_city_from_prefix(prefix VARCHAR(9)) RETURNS INT
+DELIMITER &&
+CREATE FUNCTION get_city_from_prefix(prefix INT) RETURNS INT
 BEGIN
 	DECLARE city_id INT;
     SET city_id= (SELECT c.id FROM cities AS c WHERE c.prefix=prefix);
     RETURN city_id;
 END
-$$
+&&
 
-DELIMITER $$
+DELIMITER //
 CREATE FUNCTION get_city_from_number(number VARCHAR(15)) RETURNS INT
 BEGIN
-	DECLARE prefix VARCHAR(9);
+	DECLARE prefix INT;
     DECLARE city_id INT;
     SET prefix= get_prefix(number);
     SET city_id= get_city_from_prefix(prefix);
     RETURN city_id;
 END
-$$
+//
 
 DELIMITER $$
 CREATE FUNCTION get_id_phone_by_number(number VARCHAR(15)) RETURNS INT
@@ -173,6 +173,7 @@ DROP FUNCTION get_city_from_prefix;
 /* Procedures calls */
 
 CALL add_city("Buenos Aires", "Mar del Plata", 223);
+CALL add_city("Buenos Aires", "Buenos Aires", 11);
 
 /* Default Inserts */
 
@@ -185,10 +186,12 @@ INSERT INTO user_types (type) VALUES ("client"), ("employee");
 DELIMITER $$
 CREATE PROCEDURE testing()
 BEGIN
-	DECLARE prefix VARCHAR(9);
 	DECLARE city_id INT;
-    SET city_id= get_city_from_number(223542694);
+    DECLARE prefix INT;
+    SET prefix= get_prefix(1155426942);
+    SET city_id= get_city_from_number(113542694);
     SELECT city_id;
+    SELECT prefix;
 END;
 $$
 
