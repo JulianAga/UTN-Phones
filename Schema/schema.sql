@@ -40,11 +40,9 @@ CREATE TABLE users(
     name VARCHAR(30),
     surname VARCHAR(30),
     city INT,
-    province INT,
     user_type INT,
     CONSTRAINT pk_id_user PRIMARY KEY (id),
     CONSTRAINT fk_id_city FOREIGN KEY (city) REFERENCES cities (id),
-    CONSTRAINT fk_id_province2 FOREIGN KEY (province) REFERENCES provinces (id),
     CONSTRAINT fk_user_type FOREIGN KEY (user_type) REFERENCES user_types (id)
 );
 
@@ -59,6 +57,7 @@ CREATE TABLE phone_lines(
     number VARCHAR(15) UNIQUE,
     line_type INT,
     user_id INT,
+    suspended BOOLEAN DEFAULT FALSE,
     CONSTRAINT pk_id_phone_line PRIMARY KEY (id),
     CONSTRAINT fk_line_type FOREIGN KEY (line_type) REFERENCES line_types (id),
     CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users (id)
@@ -100,7 +99,7 @@ CREATE TABLE calls(
     id_destiny_line INT,
     origin_city INT,
     destiny_city INT,
-    bill INT,
+    bill INT DEFAULT NULL,
     CONSTRAINT pk_id_call PRIMARY KEY (id),
     CONSTRAINT fk_id_origin_line FOREIGN KEY (id_origin_line) REFERENCES phone_lines (id),
     CONSTRAINT fk_id_destiny_line FOREIGN KEY (id_destiny_line) REFERENCES phone_lines (id),
@@ -162,18 +161,26 @@ BEGIN
 END
 //
 
-DELIMITER $$
+DELIMITER !!
 CREATE FUNCTION get_id_phone_by_number(number VARCHAR(15)) RETURNS INT
 BEGIN
+	DECLARE phone_id INT;
+    SET phone_id= (SELECT pl.id FROM phone_lines AS pl WHERE pl.number=number);
+    RETURN phone_id;
+END
+!!
+
+DELIMITER $$
+CREATE FUNCTION get_user_from_number(number VARCHAR(15)) RETURNS INT
+BEGIN
+	DECLARE user_id INT;
+    DECLARE phone_id INT;
+    SET phone_id= get_id_phone_by_number(number);
+    SET user_id= (SELECT u.id FROM users AS u INNER JOIN phone_lines AS pl WHERE pl.id=phone_id AND u.id=pl.user_id);
+	RETURN user_id;
 END
 $$
 
-DROP FUNCTION get_city_from_prefix;
-
-/* Procedures calls */
-
-CALL add_city("Buenos Aires", "Mar del Plata", 223);
-CALL add_city("Buenos Aires", "Buenos Aires", 11);
 
 /* Default Inserts */
 
@@ -181,17 +188,28 @@ INSERT INTO provinces (name) VALUES ("Buenos Aires"), ("Catamarca"), ("Chaco"), 
 INSERT INTO line_types (type) VALUES ("home"), ("mobile");
 INSERT INTO user_types (type) VALUES ("client"), ("employee");
 
+/* Procedures calls */
+
+CALL add_city("Buenos Aires", "Mar del Plata", 223);
+CALL add_city("Buenos Aires", "Buenos Aires", 11);
+
 /* Testing */
+
+INSERT INTO users (dni, username, password, name, surname, city, user_type) VALUES ("41715326", "florchiexco", "123", "Florencia", "Excoffon", 1, 1);
+INSERT INTO phone_lines (number, line_type, user_id) VALUES ("113542694", 1, 1);
 
 DELIMITER $$
 CREATE PROCEDURE testing()
 BEGIN
 	DECLARE city_id INT;
-    DECLARE prefix INT;
-    SET prefix= get_prefix(1155426942);
+    DECLARE phone_id INT;
+    DECLARE user INT;
     SET city_id= get_city_from_number(113542694);
+    SET phone_id= get_id_phone_by_number(113542694);
+    SET user= get_user_from_number(113542694);
+    SELECT user;
     SELECT city_id;
-    SELECT prefix;
+    SELECT phone_id;
 END;
 $$
 
