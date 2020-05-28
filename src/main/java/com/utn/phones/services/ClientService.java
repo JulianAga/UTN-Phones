@@ -19,7 +19,7 @@ public class ClientService {
     this.cityService = cityService;
   }
 
-  public Client save(ClientRequestDto clientDto) {
+  public Client saveDto(ClientRequestDto clientDto) {
 
     Client client = new Client();
     client.setCity(cityService.findById(clientDto.getCity()));
@@ -31,7 +31,14 @@ public class ClientService {
     return this.clientRepository.save(client);
   }
 
+  public Client save(Client client) {
+    return this.clientRepository.save(client);
+  }
+
   public List<Client> findAll() {
     return this.clientRepository.findAll();
   }
+
+  //TODO agregar excepcion user not found
+  public Client findById(Integer id) throws Exception { return this.clientRepository.findById(id).orElseThrow(Exception::new);}
 }

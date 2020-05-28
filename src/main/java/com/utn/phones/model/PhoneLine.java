@@ -1,6 +1,7 @@
 package com.utn.phones.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -35,12 +36,14 @@ public class PhoneLine {
   @NotNull
   @ManyToOne
   @JoinColumn(name = "line_type")
+  @JsonProperty(value = "line_type")
   private LineType lineType;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
+  @JsonProperty(value = "user_id")
   @JsonBackReference
   private Client client;
 
-  private Boolean suspended;
+ // private Boolean suspended;
 }
