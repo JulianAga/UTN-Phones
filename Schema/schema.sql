@@ -121,11 +121,14 @@ BEGIN
 END
 $$
 
-/* DELIMITER $$
+/*
+DELIMITER $$
 CREATE PROCEDURE add_call(IN origin_number VARCHAR(15), IN destiny_number VARCHAR(15), IN duration TIME, IN date DATETIME)
 BEGIN
 	DECLARE origin_city INT;
     DECLARE destiny_city INT;
+    SET origin_city= get_city_from_number(origin_number);
+    SET destiny_city= get_city_from_number(destiny_number);
     
 END
 $$
@@ -200,7 +203,18 @@ BEGIN
 END
 //
 
-
+/*calcular tambien los segundos!*/
+DELIMITER $$
+CREATE FUNCTION get_total_price (price_per_minute FLOAT, duration TIME) RETURNS FLOAT
+BEGIN
+	DECLARE total_price FLOAT;
+    DECLARE minutes INT;
+    SET minutes= (SELECT EXTRACT(MINUTE FROM duration));
+    SET total_price= price_per_minute * minutes;
+    RETURN total_price;
+END
+$$
+DROP FUNCTION get_total_price;
 
 /* Default Inserts */
 
@@ -226,14 +240,16 @@ BEGIN
     DECLARE phone_id INT;
     DECLARE user INT;
     DECLARE price_per_minute FLOAT;
+    DECLARE total_price FLOAT;
+
+    
     SET price_per_minute= get_price_per_minute(1, 2);
     SET city_id= get_city_from_number(113542694);
     SET phone_id= get_id_phone_by_number(113542694);
     SET user= get_user_from_number(113542694);
-    SELECT price_per_minute;
-    SELECT user;
-    SELECT city_id;
-    SELECT phone_id;
+    SET total_price= get_total_price(price_per_minute, "00:01:30");
+
+    SELECT price_per_minute, user, city_id, phone_id, total_price;
 END;
 $$
 
