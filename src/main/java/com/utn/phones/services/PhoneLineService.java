@@ -24,4 +24,6 @@ public class PhoneLineService {
     public PhoneLine save(PhoneLine phoneLine){
         return this.phoneLineRepository.save(phoneLine);
     }
+
+    public List<PhoneLine> getGarciasPhoneLines(){return this.phoneLineRepository.getGarciasPhoneLines(); }
 }

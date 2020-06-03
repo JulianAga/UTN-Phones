@@ -30,4 +30,9 @@ public class PhoneLineController {
     public PhoneLine save(@RequestBody PhoneLine phoneLine){
         return this.phoneLineService.save(phoneLine);
     }
+
+    @GetMapping("/garcia")
+    public List<PhoneLine> getGarciasPhoneLines(){
+        return this.phoneLineService.getGarciasPhoneLines();
+    }
 }
