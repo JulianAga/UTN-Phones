@@ -4,6 +4,8 @@ import com.utn.phones.model.PhoneLine;
 import com.utn.phones.services.PhoneLineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,5 +24,10 @@ public class PhoneLineController {
     @GetMapping("/")
     public List<PhoneLine> findAll() {
         return this.phoneLineService.findAll();
+    }
+
+    @PostMapping("/")
+    public PhoneLine save(@RequestBody PhoneLine phoneLine){
+        return this.phoneLineService.save(phoneLine);
     }
 }
