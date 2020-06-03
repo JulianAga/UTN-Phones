@@ -3,7 +3,7 @@ package com.utn.phones.controllers;
 import static org.mockito.Mockito.mock;
 
 import com.utn.phones.services.UserService;
-import org.junit.Before;
+//import org.junit.Before;
 
 
 public class UserControllerTest {
@@ -11,13 +11,13 @@ public class UserControllerTest {
   UserController userController;
   UserService service;
 
-
+/*
   @Before
   public void setUp() {
     service = mock(UserService.class);
     userController = new UserController(service);
   }
-/*
+
   @Test
   public void testLoginOk() throws UserNotexistException, ValidationException {
     User loggedUser = new User(1, "Nombre", "username", "", "Surname", null);

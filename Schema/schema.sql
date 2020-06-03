@@ -3,13 +3,14 @@ drop database utn_phones;
 USE utn_phones;
 
 select * from USERS;
+INSERT INTO users (dni, username, password, name, surname, city, user_type) VALUES ("40225328", "SasukeExco", "heno", "Sasuke", "Excoffon", 1, 1);
 SELECT * FROM PROVINCES;
 SELECT * FROM CITIES;
+INSERT INTO cities (prefix, name, province) VALUES (3541, "Carlos Paz", 5);
 select * from user_types;
 select * from line_types;
 select * from bills;
 select * from phone_lines;
-
 select * from tariffs;
 
 CREATE TABLE line_types(
@@ -81,6 +82,8 @@ CREATE TABLE phone_lines(
     CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
+INSERT INTO phone_lines (number, line_type, user_id) VALUES ("354158763",2, 2);
+
 CREATE TABLE bills(
 	id INT AUTO_INCREMENT,
     quantity_of_calls INT,
@@ -94,6 +97,8 @@ CREATE TABLE bills(
     CONSTRAINT fk_id_client FOREIGN KEY (client) REFERENCES users (id),
     CONSTRAINT fk_id_phone_line FOREIGN KEY (phone_line) REFERENCES phone_lines(id)
 );
+
+INSERT INTO bills(quantity_of_calls, cost_price, total_price, date, expiring_date, client, phone_line) VALUES (2, 1, 5, "1999-06-25", "1999-06-30", 1, 1);
 
 CREATE TABLE tariffs(
 	origin_city INT,
@@ -125,7 +130,6 @@ CREATE TABLE calls(
     CONSTRAINT fk_destiny_city2 FOREIGN KEY (destiny_city) REFERENCES cities (id),
     CONSTRAINT fk_id_bill FOREIGN KEY (bill) REFERENCES bills (id)
 );
-
 
 /* Procedures */
 

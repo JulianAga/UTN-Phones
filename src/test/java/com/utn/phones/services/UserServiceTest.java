@@ -3,7 +3,7 @@ package com.utn.phones.services;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import com.utn.phones.repositories.UserRepository;
-import org.junit.Before;
+//import org.junit.Before;
 import org.mockito.Mock;
 
 public class UserServiceTest {
@@ -13,7 +13,7 @@ public class UserServiceTest {
   @Mock
   UserRepository dao;
 
-  @Before
+/*  @Before
   public void setUp() {
     initMocks(this);
     service = new UserService(dao);
