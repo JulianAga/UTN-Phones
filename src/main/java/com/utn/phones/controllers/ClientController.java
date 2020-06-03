@@ -1,10 +1,12 @@
 package com.utn.phones.controllers;
 
 import com.utn.phones.model.Client;
+import com.utn.phones.projections.ClientsMoreThanThree;
 import com.utn.phones.services.ClientService;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +49,13 @@ public class ClientController {
         .path("/{id}")
         .buildAndExpand(client.getId())
         .toUri();
+  }
+
+  @GetMapping("/three")
+  public ResponseEntity<List<ClientsMoreThanThree>> getClientsMoreThanThreeCalls() {
+    List<ClientsMoreThanThree> list = clientService.getClientsMoreThanThreeCalls();
+    return (!list.isEmpty()) ? ResponseEntity.ok(list)
+        : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
 }

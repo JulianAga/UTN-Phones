@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CallRepository extends JpaRepository<Call, Integer> {
+
+
+
 }
