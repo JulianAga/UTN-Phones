@@ -1,20 +1,14 @@
 package com.utn.phones.services;
 
-import com.utn.phones.model.City;
-import com.utn.phones.model.Client;
 import com.utn.phones.model.PhoneLine;
-import com.utn.phones.model.UserType;
 import com.utn.phones.repositories.PhoneLineRepository;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.junit.Before;
-import sun.jvm.hotspot.utilities.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
