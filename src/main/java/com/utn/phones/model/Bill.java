@@ -1,12 +1,6 @@
 package com.utn.phones.model;
 
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,7 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,29 +25,30 @@ import java.time.LocalDateTime;
 @Table(name = "bills")
 public class Bill {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "phone_line")
-    private PhoneLine phoneLine;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "phone_line")
+  private PhoneLine phoneLine;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "client")
+  private Client client;
 
-    @Column(name = "quantity_of_calls")
-    private Integer quantityOfCalls;
+  @Column(name = "quantity_of_calls")
+  private Integer quantityOfCalls;
 
-    @Column(name = "cost_price")
-    private Float costPrice;
+  @Column(name = "cost_price")
+  private Float costPrice;
 
-    @Column(name = "total_price")
-    private Float totalPrice;
+  @Column(name = "total_price")
+  private Float totalPrice;
 
-    private LocalDateTime date;
+  private LocalDate date;
 
-    @Column(name = "expiring_date")
-    private LocalDateTime expiringDate;
+  @Column(name = "expiring_date")
+  private LocalDate expiringDate;
 
 }

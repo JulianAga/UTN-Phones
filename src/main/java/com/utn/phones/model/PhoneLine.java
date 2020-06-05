@@ -39,11 +39,11 @@ public class PhoneLine {
   @JsonProperty(value = "line_type")
   private LineType lineType;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "user_id")
   @JsonProperty(value = "user_id")
   @JsonBackReference
   private Client client;
 
- // private Boolean suspended;
+  // private Boolean suspended;
 }

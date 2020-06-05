@@ -101,7 +101,8 @@ CREATE TABLE bills(
 INSERT INTO bills(quantity_of_calls, cost_price, total_price, date, expiring_date, client, phone_line) VALUES (2, 1, 5, "1999-06-25", "1999-06-30", 1, 1);
 
 CREATE TABLE tariffs(
-	origin_city INT,
+    id INT AUTO_INCREMENT,
+	  origin_city INT,
     destiny_city INT,
     cost_price FLOAT,
     price_per_minute FLOAT,
