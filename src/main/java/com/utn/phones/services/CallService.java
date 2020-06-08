@@ -1,6 +1,7 @@
 package com.utn.phones.services;
 
 import com.utn.phones.dto.BetweenDatesDto;
+import com.utn.phones.dto.CallRequestDto;
 import com.utn.phones.model.Call;
 import com.utn.phones.projections.MostCalled;
 import com.utn.phones.repositories.CallRepository;
@@ -37,6 +38,22 @@ public class CallService {
           .findAllByOriginLineClientIdAndDateBetween(userId, callBetweenDatesDto.getStart(),
               callBetweenDatesDto.getEnd());
     }
+  }
+
+  public List<Call> findCallsFromClient(Integer id) {
+    return this.callRepository.findAllByOriginLineClientId(id);
+  }
+
+  /***
+   * Agregado de llamadas
+   * @param callRequestDto Dto with four parameters destiny number, origin number, duration, and date
+   */
+  public void saveDto(CallRequestDto callRequestDto) {
+    Call call = Call.builder().originNumber(callRequestDto.getOriginNumber())
+        .destinyNumber(callRequestDto.getDestinyNumber()).duration(callRequestDto.getDuration())
+        .date(callRequestDto.getDate())
+        .build();
+    callRepository.save(call);
   }
 
 }

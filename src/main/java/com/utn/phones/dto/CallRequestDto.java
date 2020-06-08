@@ -11,13 +11,13 @@ import lombok.Data;
 public class CallRequestDto {
 
   @JsonProperty(value = "origin_number")
-  String originNumber;
+  private String originNumber;
 
   @JsonProperty(value = "destiny_number")
-  String destinyNumber;
+  private String destinyNumber;
 
-  Integer duration;
+  private Integer duration;
 
   @PastOrPresent
-  LocalDate date;
+  private LocalDate date;
 }

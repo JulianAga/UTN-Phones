@@ -1,9 +1,6 @@
 package com.utn.phones.model;
 
-import java.io.Serializable;
-import java.sql.Time;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,14 +24,14 @@ import lombok.ToString;
 @Entity
 @ToString
 @Table(name = "calls")
-public class Call{
+public class Call {
 
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  private Time duration;
+  private Integer duration;
 
   private LocalDate date;
 

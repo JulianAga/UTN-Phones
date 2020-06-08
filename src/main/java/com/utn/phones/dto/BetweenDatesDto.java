@@ -10,8 +10,8 @@ public class BetweenDatesDto {
 
   @JsonProperty
   @JsonFormat(pattern = "dd-MM-yyyy")
-  LocalDate start;
+  private LocalDate start;
   @JsonProperty
   @JsonFormat(pattern = "dd-MM-yyyy")
-  LocalDate end;
+  private LocalDate end;
 }

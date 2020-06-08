@@ -34,4 +34,11 @@ public interface CallRepository extends JpaRepository<Call, Integer> {
    */
   List<Call> findAllByOriginLineClientIdAndDateBetween(Integer userId, LocalDate Start,
       LocalDate End);
+
+  /***
+   * Consulta de llamadas por usuario
+   * @param userId id client
+   * @return calls from this client
+   */
+  List<Call> findAllByOriginLineClientId(Integer userId);
 }
