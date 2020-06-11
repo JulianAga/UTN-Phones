@@ -100,40 +100,6 @@ CREATE TABLE calls(
     CONSTRAINT fk_id_bill FOREIGN KEY (bill) REFERENCES bills (id)
 );
 
-
-/* Procedures */
-
-DELIMITER $$
-CREATE PROCEDURE throw_signal(IN id_origin_phone INT, IN id_destiny_phone INT, IN tariff_id INT)
-BEGIN
-	IF(id_origin_phone = 0)THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid origin number', MYSQL_ERRNO = 0001;
-	END IF;
-	IF(id_destiny_phone = 0)THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid destiny number', MYSQL_ERRNO = 0002;
-	END IF;
-	IF(tariff_id = 0)THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'There is no tariff for those cities', MYSQL_ERRNO = 0003;
-	END IF;
-END $$
-
-
-DELIMITER $$
-CREATE TRIGGER add_call BEFORE INSERT ON calls FOR EACH ROW
-BEGIN
-    DECLARE tariff_id INT;
-	SET new.id_origin_line= get_id_phone_by_number(new.origin_phone_line);
-    SET new.id_destiny_line= get_id_phone_by_number(new.destiny_phone_line);
-    SET new.price_per_minute= get_price_per_minute(new.origin_phone_line, new.destiny_phone_line);
-    SET new.cost_price= get_total_cost_price(get_cost_price(new.origin_phone_line, new.destiny_phone_line), new.duration);
-	SET new.total_price= get_total_price(new.price_per_minute, new.duration);
-    
-
-    SET tariff_id= get_id_tariff(new.origin_phone_line, new.destiny_phone_line);
-    CALL throw_signal(new.id_origin_line, new.id_destiny_line, tariff_id);
-END
-$$
-
 /* Functions */
 
 DELIMITER %%
@@ -239,6 +205,40 @@ BEGIN
 	DECLARE tariff_id int;
 	SET tariff_id = IFNULL((SELECT t.id FROM tariffs AS t WHERE t.origin_city = get_city_from_number(origin_number) AND t.destiny_city = get_city_from_number(origin_number)), 0);
 	RETURN tariff_id;
+END
+$$
+
+
+/* Procedures */
+
+DELIMITER $$
+CREATE PROCEDURE throw_signal(IN id_origin_phone INT, IN id_destiny_phone INT, IN tariff_id INT)
+BEGIN
+	IF(id_origin_phone = 0)THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid origin number', MYSQL_ERRNO = 0001;
+	END IF;
+	IF(id_destiny_phone = 0)THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid destiny number', MYSQL_ERRNO = 0002;
+	END IF;
+	IF(tariff_id = 0)THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'There is no tariff for those cities', MYSQL_ERRNO = 0003;
+	END IF;
+END $$
+
+
+DELIMITER $$
+CREATE TRIGGER add_call BEFORE INSERT ON calls FOR EACH ROW
+BEGIN
+    DECLARE tariff_id INT;
+	SET new.id_origin_line= get_id_phone_by_number(new.origin_phone_line);
+    SET new.id_destiny_line= get_id_phone_by_number(new.destiny_phone_line);
+    SET new.price_per_minute= get_price_per_minute(new.origin_phone_line, new.destiny_phone_line);
+    SET new.cost_price= get_total_cost_price(get_cost_price(new.origin_phone_line, new.destiny_phone_line), new.duration);
+	SET new.total_price= get_total_price(new.price_per_minute, new.duration);
+    
+
+    SET tariff_id= get_id_tariff(new.origin_phone_line, new.destiny_phone_line);
+    CALL throw_signal(new.id_origin_line, new.id_destiny_line, tariff_id);
 END
 $$
 
