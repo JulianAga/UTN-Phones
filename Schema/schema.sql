@@ -85,8 +85,8 @@ CREATE TABLE calls(
     date DATETIME,
     cost_price FLOAT,
     total_price FLOAT,
-    origin_phone_line VARCHAR(9),
-    destiny_phone_line VARCHAR(9),
+    origin_phone_line VARCHAR(15),
+    destiny_phone_line VARCHAR(15),
     id_origin_line INT,
     id_destiny_line INT,
     origin_city INT,
@@ -197,17 +197,15 @@ BEGIN
 END
 $$
 
-
-DELIMITER $$
+DELIMITER //
 CREATE FUNCTION get_id_tariff(origin_number VARCHAR(15), destiny_number VARCHAR(15))
 RETURNS INT
 BEGIN
 	DECLARE tariff_id int;
-	SET tariff_id = IFNULL((SELECT t.id FROM tariffs AS t WHERE t.origin_city = get_city_from_number(origin_number) AND t.destiny_city = get_city_from_number(origin_number)), 0);
+	SET tariff_id = ISNULL((SELECT t.id FROM tariffs AS t WHERE t.origin_city = get_city_from_number(origin_number) AND t.destiny_city = get_city_from_number(origin_number)));
 	RETURN tariff_id;
 END
-$$
-
+//
 
 /* Procedures */
 
@@ -232,8 +230,10 @@ BEGIN
     DECLARE tariff_id INT;
 	SET new.id_origin_line= get_id_phone_by_number(new.origin_phone_line);
     SET new.id_destiny_line= get_id_phone_by_number(new.destiny_phone_line);
-    SET new.price_per_minute= get_price_per_minute(new.origin_phone_line, new.destiny_phone_line);
-    SET new.cost_price= get_total_cost_price(get_cost_price(new.origin_phone_line, new.destiny_phone_line), new.duration);
+    SET new.origin_city=get_city_from_number(new.origin_phone_line);
+    SET new.destiny_city=get_city_from_number(new.destiny_phone_line);
+    SET new.price_per_minute= get_price_per_minute(new.origin_city, new.destiny_city);
+    SET new.cost_price= get_total_cost_price(get_cost_price(new.origin_city, new.destiny_city), new.duration);
 	SET new.total_price= get_total_price(new.price_per_minute, new.duration);
     
 
@@ -241,8 +241,6 @@ BEGIN
     CALL throw_signal(new.id_origin_line, new.id_destiny_line, tariff_id);
 END
 $$
-
-
 
 /* Default Inserts */
 
