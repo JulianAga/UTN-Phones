@@ -1,3 +1,4 @@
+DROP DATABASE utn_phones;
 CREATE DATABASE utn_phones;
 USE utn_phones;
 
@@ -160,6 +161,17 @@ BEGIN
 END
 $$
 
+DELIMITER $$
+CREATE FUNCTION get_user_from_id_phone(id_phone INT) RETURNS INT
+BEGIN
+	DECLARE user_id INT;
+    SET user_id= (SELECT u.id FROM users AS u INNER JOIN phone_lines AS pl WHERE pl.id=id_phone AND u.id=pl.user_id);
+	RETURN user_id;
+END
+$$
+
+
+
 DELIMITER //
 CREATE FUNCTION get_price_per_minute (origin_city INT, destiny_city INT) RETURNS FLOAT
 BEGIN
@@ -209,7 +221,7 @@ BEGIN
 END
 //
 
-/* Procedures, triggers */
+/* Procedures, triggers, events */
 
 DELIMITER $$
 CREATE PROCEDURE throw_signal(IN id_origin_phone INT, IN id_destiny_phone INT, IN tariff_id INT)
@@ -265,12 +277,13 @@ DELIMITER $$
 SET GLOBAL event_scheduler = ON;
 CREATE DEFINER = 'root'@'localhost' EVENT IF NOT EXISTS generate_bill ON SCHEDULE
 EVERY 30 DAY
-STARTS '2020-06-14 17:41:00'
+STARTS '2020-06-01 00:00:00'
 ENABLE
 DO
 	BEGIN
 		DECLARE id_phone_line int;
 		DECLARE done INT DEFAULT 0;
+        DECLARE client INT;
 		DECLARE cur_phonelines CURSOR FOR SELECT id FROM utn_phones.phone_lines;
 		DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 		OPEN cur_phonelines;
@@ -279,15 +292,17 @@ DO
 				IF done = 1 THEN
 					LEAVE loop_phonelines;
 				END IF;
+                SET client = get_user_from_id_phone(id_phone_line);
 				CALL get_calls_total_cost_and_total_price(id_phone_line, @quantity_of_calls, @cost_price, @total_price);
-				INSERT INTO utn_phones.bills(id, quantity_of_calls , cost_price , total_price, expiring_date ) VALUES (id_phone_line, @quantity_of_calls, @cost_price, @total_price, NOW() + INTERVAL 15 day);
-				CALL set_bill(last_insert_id(), id_phone_line);
+                IF @quantity_of_calls > 0 THEN
+					INSERT INTO utn_phones.bills(phone_line, quantity_of_calls , cost_price , total_price, expiring_date, date, client ) VALUES (id_phone_line, @quantity_of_calls, @cost_price, @total_price, NOW() + INTERVAL 15 day, CURDATE(), client);
+					CALL set_bill(last_insert_id(), id_phone_line);
+                END IF;
 			END LOOP;
 		CLOSE cur_phonelines;
    	END
     $$
     
-
 
 /* Default Inserts */
 
