@@ -209,7 +209,7 @@ BEGIN
 END
 //
 
-/* Procedures */
+/* Procedures, triggers */
 
 DELIMITER $$
 CREATE PROCEDURE throw_signal(IN id_origin_phone INT, IN id_destiny_phone INT, IN tariff_id INT)
@@ -224,7 +224,6 @@ BEGIN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'There is no tariff for those cities', MYSQL_ERRNO = 0003;
 	END IF;
 END $$
-
 
 DELIMITER $$
 CREATE TRIGGER add_call BEFORE INSERT ON calls FOR EACH ROW
@@ -243,6 +242,52 @@ BEGIN
     CALL throw_signal(new.id_origin_line, new.id_destiny_line, tariff_id);
 END
 $$
+
+DELIMITER //
+CREATE PROCEDURE get_calls_total_cost_and_total_price(IN id_phone_line INT, OUT quantity_of_calls INT, OUT cost_price FLOAT, OUT total_price FLOAT)
+BEGIN
+	SET cost_price = IFNULL((SELECT SUM(c.cost_price) FROM calls AS c WHERE id_origin_line = id_phone_line AND ISNULL(bill)), 0);
+	SET quantity_of_calls = IFNULL((SELECT COUNT(c.id) FROM calls AS c WHERE id_origin_line = id_phone_line  AND ISNULL(bill)), 0);
+	SET total_price = IFNULL((SELECT SUM(c.total_price) FROM calls AS c WHERE id_origin_line = id_phone_line  AND ISNULL(bill)), 0);
+END
+//
+
+
+DELIMITER $$
+CREATE PROCEDURE set_bill(IN bill_id int,IN id_phone_line INT)
+BEGIN
+	UPDATE calls SET bill = bill_id WHERE id_origin_line = id_phone_line;
+END
+$$
+
+
+DELIMITER $$
+SET GLOBAL event_scheduler = ON;
+CREATE DEFINER = 'root'@'localhost' EVENT IF NOT EXISTS generate_bill ON SCHEDULE
+EVERY 30 DAY
+STARTS '2020-06-14 17:41:00'
+ENABLE
+DO
+	BEGIN
+		DECLARE id_phone_line int;
+		DECLARE done INT DEFAULT 0;
+		DECLARE cur_phonelines CURSOR FOR SELECT id FROM utn_phones.phone_lines;
+		DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+		OPEN cur_phonelines;
+			loop_phonelines:LOOP
+				FETCH cur_phonelines INTO id_phone_line;
+				IF done = 1 THEN
+					LEAVE loop_phonelines;
+				END IF;
+				CALL get_calls_total_cost_and_total_price(id_phone_line, @quantity_of_calls, @cost_price, @total_price);
+				INSERT INTO utn_phones.bills(id, quantity_of_calls , cost_price , total_price, expiring_date ) VALUES (id_phone_line, @quantity_of_calls, @cost_price, @total_price, NOW() + INTERVAL 15 day);
+				CALL set_bill(last_insert_id(), id_phone_line);
+			END LOOP;
+		CLOSE cur_phonelines;
+   	END
+    $$
+    
+
 
 /* Default Inserts */
 
