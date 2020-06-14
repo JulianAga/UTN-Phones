@@ -144,7 +144,7 @@ DELIMITER !!
 CREATE FUNCTION get_id_phone_by_number(number VARCHAR(15)) RETURNS INT
 BEGIN
 	DECLARE phone_id INT;
-    SET phone_id= (SELECT pl.id FROM phone_lines AS pl WHERE pl.number=number);
+    SET phone_id=  (IFNULL((SELECT id FROM phone_lines AS pl WHERE pl.number = number), 0));
     RETURN phone_id;
 END
 !!
@@ -202,7 +202,9 @@ CREATE FUNCTION get_id_tariff(origin_number VARCHAR(15), destiny_number VARCHAR(
 RETURNS INT
 BEGIN
 	DECLARE tariff_id int;
-	SET tariff_id = ISNULL((SELECT t.id FROM tariffs AS t WHERE t.origin_city = get_city_from_number(origin_number) AND t.destiny_city = get_city_from_number(origin_number)));
+	SET tariff_id =IFNULL((SELECT t.id FROM tariffs AS t WHERE
+							t.origin_city = get_city_from_number(origin_number) AND
+							t.destiny_city = get_city_from_number(destiny_number)), 0);
 	RETURN tariff_id;
 END
 //
