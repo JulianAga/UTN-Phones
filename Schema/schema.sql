@@ -214,9 +214,7 @@ CREATE FUNCTION get_id_tariff(origin_number VARCHAR(15), destiny_number VARCHAR(
 RETURNS INT
 BEGIN
 	DECLARE tariff_id int;
-	SET tariff_id =IFNULL((SELECT t.id FROM tariffs AS t WHERE
-							t.origin_city = get_city_from_number(origin_number) AND
-							t.destiny_city = get_city_from_number(destiny_number)), 0);
+	SET tariff_id =IFNULL((SELECT t.id FROM tariffs AS t WHERE t.origin_city = get_city_from_number(origin_number) AND t.destiny_city = get_city_from_number(destiny_number)), 0);
 	RETURN tariff_id;
 END
 //
@@ -277,7 +275,7 @@ DELIMITER $$
 SET GLOBAL event_scheduler = ON;
 CREATE DEFINER = 'root'@'localhost' EVENT IF NOT EXISTS generate_bill ON SCHEDULE
 EVERY 30 DAY
-STARTS '2020-06-01 00:00:00'
+STARTS '2020-06-01 01:00:00'
 ENABLE
 DO
 	BEGIN
@@ -294,10 +292,8 @@ DO
 				END IF;
                 SET client = get_user_from_id_phone(id_phone_line);
 				CALL get_calls_total_cost_and_total_price(id_phone_line, @quantity_of_calls, @cost_price, @total_price);
-                IF @quantity_of_calls > 0 THEN
-					INSERT INTO utn_phones.bills(phone_line, quantity_of_calls , cost_price , total_price, expiring_date, date, client ) VALUES (id_phone_line, @quantity_of_calls, @cost_price, @total_price, NOW() + INTERVAL 15 day, CURDATE(), client);
-					CALL set_bill(last_insert_id(), id_phone_line);
-                END IF;
+				INSERT INTO utn_phones.bills(phone_line, quantity_of_calls , cost_price , total_price, expiring_date, date, client ) VALUES (id_phone_line, @quantity_of_calls, @cost_price, @total_price, NOW() + INTERVAL 15 day, CURDATE(), client);
+				CALL set_bill(last_insert_id(), id_phone_line);
 			END LOOP;
 		CLOSE cur_phonelines;
    	END
