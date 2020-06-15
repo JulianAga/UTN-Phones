@@ -257,8 +257,8 @@ DELIMITER //
 CREATE PROCEDURE get_calls_total_cost_and_total_price(IN id_phone_line INT, OUT quantity_of_calls INT, OUT cost_price FLOAT, OUT total_price FLOAT)
 BEGIN
 	SET cost_price = IFNULL((SELECT SUM(c.cost_price) FROM calls AS c WHERE id_origin_line = id_phone_line AND ISNULL(bill)), 0);
+    SET total_price = IFNULL((SELECT SUM(c.total_price) FROM calls AS c WHERE id_origin_line = id_phone_line  AND ISNULL(bill)), 0);
 	SET quantity_of_calls = IFNULL((SELECT COUNT(c.id) FROM calls AS c WHERE id_origin_line = id_phone_line  AND ISNULL(bill)), 0);
-	SET total_price = IFNULL((SELECT SUM(c.total_price) FROM calls AS c WHERE id_origin_line = id_phone_line  AND ISNULL(bill)), 0);
 END
 //
 
@@ -270,35 +270,41 @@ BEGIN
 END
 $$
 
-
 DELIMITER $$
-SET GLOBAL event_scheduler = ON;
-CREATE DEFINER = 'root'@'localhost' EVENT IF NOT EXISTS generate_bill ON SCHEDULE
-EVERY 30 DAY
-STARTS '2020-06-01 01:00:00'
-ENABLE
-DO
-	BEGIN
+CREATE PROCEDURE generate_bill()
+BEGIN
 		DECLARE id_phone_line int;
-		DECLARE done INT DEFAULT 0;
+		DECLARE end INT DEFAULT 0;
         DECLARE client INT;
-		DECLARE cur_phonelines CURSOR FOR SELECT id FROM utn_phones.phone_lines;
-		DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
-		OPEN cur_phonelines;
-			loop_phonelines:LOOP
-				FETCH cur_phonelines INTO id_phone_line;
-				IF done = 1 THEN
-					LEAVE loop_phonelines;
+		DECLARE cursor_phone_lines CURSOR FOR SELECT id FROM utn_phones.phone_lines;
+		DECLARE CONTINUE HANDLER FOR NOT FOUND SET end = TRUE;
+		OPEN cursor_phone_lines;
+			loop_phone_lines:LOOP
+				FETCH cursor_phone_lines INTO id_phone_line;
+				IF end = 1 THEN
+					LEAVE loop_phone_lines;
 				END IF;
                 SET client = get_user_from_id_phone(id_phone_line);
 				CALL get_calls_total_cost_and_total_price(id_phone_line, @quantity_of_calls, @cost_price, @total_price);
 				INSERT INTO utn_phones.bills(phone_line, quantity_of_calls , cost_price , total_price, expiring_date, date, client ) VALUES (id_phone_line, @quantity_of_calls, @cost_price, @total_price, NOW() + INTERVAL 15 day, CURDATE(), client);
 				CALL set_bill(last_insert_id(), id_phone_line);
 			END LOOP;
-		CLOSE cur_phonelines;
-   	END
-    $$
-    
+		CLOSE cursor_phone_lines;
+END
+$$
+
+
+DELIMITER $$
+SET GLOBAL event_scheduler = ON;
+CREATE EVENT IF NOT EXISTS event_generate_bill ON SCHEDULE
+EVERY 1 MONTH
+STARTS '2020-06-01 00:00:00'
+ENABLE
+DO
+BEGIN
+	CALL generate_bill();
+END
+$$
 
 /* Default Inserts */
 
