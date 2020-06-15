@@ -300,13 +300,44 @@ DELIMITER $$
 SET GLOBAL event_scheduler = ON;
 CREATE EVENT IF NOT EXISTS event_generate_bill ON SCHEDULE
 EVERY 1 MONTH
-STARTS '2020-06-15 14:09:00'
+STARTS '2020-06-01 00:00:00'
 ENABLE
 DO
 BEGIN
 	CALL generate_bill();
 END
 $$
+
+
+DELIMITER $$
+CREATE VIEW calls_consult 
+AS
+SELECT c.origin_phone_line, c.origin_city AS origin_city, c.destiny_phone_line, c.destiny_city, c.total_price, c.duration, c.date, pl.user_id FROM calls AS c INNER JOIN phone_lines AS pl ON pl.id=c.id_origin_line;
+$$
+
+
+DELIMITER //
+CREATE PROCEDURE calls_by_user (IN client INT)
+BEGIN
+	SELECT * FROM calls_consult WHERE user_id=client;
+END
+//
+
+DELIMITER $$
+CREATE PROCEDURE calls_by_date (IN from_date DATE, IN to_date DATE)
+BEGIN
+	SELECT * FROM calls_consult WHERE date BETWEEN from_date AND to_date;
+END
+$$
+
+DELIMITER $$
+CREATE PROCEDURE calls_by_date_and_user (IN user INT,IN from_date DATE, IN to_date DATE)
+BEGIN
+	 SELECT * FROM calls_consult WHERE user_id=user AND date BETWEEN from_date AND to_date;
+END
+$$
+
+
 
 /* Default Inserts */
 
