@@ -278,6 +278,7 @@ BEGIN
         DECLARE client INT;
 		DECLARE cursor_phone_lines CURSOR FOR SELECT id FROM utn_phones.phone_lines;
 		DECLARE CONTINUE HANDLER FOR NOT FOUND SET end = TRUE;
+	START TRANSACTION;
 		OPEN cursor_phone_lines;
 			loop_phone_lines:LOOP
 				FETCH cursor_phone_lines INTO id_phone_line;
@@ -290,6 +291,7 @@ BEGIN
 				CALL set_bill(last_insert_id(), id_phone_line);
 			END LOOP;
 		CLOSE cursor_phone_lines;
+	COMMIT;
 END
 $$
 
@@ -298,7 +300,7 @@ DELIMITER $$
 SET GLOBAL event_scheduler = ON;
 CREATE EVENT IF NOT EXISTS event_generate_bill ON SCHEDULE
 EVERY 1 MONTH
-STARTS '2020-06-01 00:00:00'
+STARTS '2020-06-15 14:09:00'
 ENABLE
 DO
 BEGIN
@@ -311,3 +313,7 @@ $$
 INSERT INTO provinces (name) VALUES ("Buenos Aires"), ("Catamarca"), ("Chaco"), ("Chubut"), ("Córdoba"), ("Corrientes"), ("Entre Ríos"), ("Formosa"), ("Jujuy"), ("La Pampa"), ("La Rioja"), ("Mendoza"), ("Misiones"), ("Neuquén"), ("Rio Negro"), ("Salta"), ("San Juan"), ("San Luis"), ("Santa Cruz"), ("Santa Fé"), ("Santiago del Estero"), ("Tierra del Fuego"), ("Tucumán");
 INSERT INTO line_types (type) VALUES ("home"), ("mobile");
 INSERT INTO user_types (type) VALUES ("client"), ("employee");
+
+use utn_phones;
+select * from calls;
+select * from bills;
