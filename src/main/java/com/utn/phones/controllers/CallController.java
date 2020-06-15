@@ -5,15 +5,14 @@ import com.utn.phones.dto.CallRequestDto;
 import com.utn.phones.model.Call;
 import com.utn.phones.projections.MostCalled;
 import com.utn.phones.services.CallService;
+import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/call")
@@ -26,24 +25,29 @@ public class CallController {
     this.callService = callService;
   }
 
-  @GetMapping(value = "/top/{id}")
   public ResponseEntity<List<MostCalled>> findMostCalledCities(@PathVariable Integer id) {
     return ResponseEntity.ok(callService.findMostCalledCities(id));
   }
 
-  @GetMapping("/between/{id}")
-  public ResponseEntity<List<Call>> findBetweenDates(
-      @RequestBody BetweenDatesDto callBetweenDatesDto, @PathVariable Integer id) {
+  public ResponseEntity<List<Call>> findBetweenDates(BetweenDatesDto callBetweenDatesDto,
+      Integer id) {
     return ResponseEntity.ok(this.callService.findBetweenDates(id, callBetweenDatesDto));
   }
 
-  @GetMapping("/client/{id}")
   public ResponseEntity<List<Call>> findCallsFromClient(@PathVariable Integer id) {
     return ResponseEntity.ok(this.callService.findCallsFromClient(id));
   }
 
-  @PostMapping("")
-  public void save(CallRequestDto callRequestDto) {
-    this.callService.saveDto(callRequestDto);
+  public URI save(CallRequestDto callRequestDto) {
+    return getLocation(this.callService.saveDto(callRequestDto));
+  }
+
+
+  private URI getLocation(Call call) {
+    return ServletUriComponentsBuilder
+        .fromCurrentRequest()
+        .path("/{id}")
+        .buildAndExpand(call.getId())
+        .toUri();
   }
 }

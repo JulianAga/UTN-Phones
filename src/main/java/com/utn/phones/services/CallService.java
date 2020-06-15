@@ -48,12 +48,12 @@ public class CallService {
    * Agregado de llamadas
    * @param callRequestDto Dto with four parameters destiny number, origin number, duration, and date
    */
-  public void saveDto(CallRequestDto callRequestDto) {
+  public Call saveDto(CallRequestDto callRequestDto) {
     Call call = Call.builder().originNumber(callRequestDto.getOriginNumber())
         .destinyNumber(callRequestDto.getDestinyNumber()).duration(callRequestDto.getDuration())
         .date(callRequestDto.getDate())
         .build();
-    callRepository.save(call);
+    return callRepository.save(call);
   }
 
 }
