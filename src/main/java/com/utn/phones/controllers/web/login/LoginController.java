@@ -4,7 +4,7 @@ import com.utn.phones.Sessions.SessionManager;
 import com.utn.phones.controllers.UserController;
 import com.utn.phones.dto.LoginDto;
 import com.utn.phones.exceptions.loginExceptions.InvalidLoginException;
-import com.utn.phones.exceptions.loginExceptions.UserNotexistException;
+import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
 import com.utn.phones.exceptions.loginExceptions.ValidationException;
 import com.utn.phones.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +32,10 @@ public class LoginController {
 
   @PostMapping("/login")
   public ResponseEntity<String> login(@RequestBody LoginDto loginDto)
-      throws InvalidLoginException, UserNotexistException, ValidationException {
-    try {
-      User user = userController.login(loginDto.getUsername(), loginDto.getPassword());
-      String token = sessionManager.createSession(user);
-      return ResponseEntity.ok(token);
-    } catch (UserNotexistException e) {
-      throw new InvalidLoginException();
-    }
+      throws UserNotExistException, ValidationException {
+    User user = userController.login(loginDto.getUsername(), loginDto.getPassword());
+    String token = sessionManager.createSession(user);
+    return ResponseEntity.ok(token);
   }
 
   @PostMapping("/logout")

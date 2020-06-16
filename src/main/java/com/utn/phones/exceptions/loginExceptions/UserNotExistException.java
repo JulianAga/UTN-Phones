@@ -1,8 +1,8 @@
 package com.utn.phones.exceptions.loginExceptions;
 
-public class InvalidLoginException extends Throwable {
+public class UserNotExistException extends Exception {
 
   public String getMessage() {
-    return "Invalid login";
+    return "User doesn't exist";
   }
 }

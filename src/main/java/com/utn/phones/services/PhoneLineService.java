@@ -30,4 +30,12 @@ public class PhoneLineService {
     return Optional.ofNullable(phoneLineRepository.findByNumber(number))
         .orElseThrow(PhoneLineNotExists::new);
   }
+
+  public void deleteById(Integer id){
+    this.phoneLineRepository.deleteById(id);
+  }
+
+  public void suspendPhoneLine(Integer id){
+    this.phoneLineRepository.findById(id);
+  }
 }

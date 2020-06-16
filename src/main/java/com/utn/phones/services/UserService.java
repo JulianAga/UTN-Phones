@@ -1,6 +1,6 @@
 package com.utn.phones.services;
 
-import com.utn.phones.exceptions.loginExceptions.UserNotexistException;
+import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
 import com.utn.phones.model.User;
 import com.utn.phones.repositories.UserRepository;
 import java.util.Optional;
@@ -23,8 +23,8 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-    public User login(String username, String password) throws UserNotexistException {
+    public User login(String username, String password) throws UserNotExistException {
         User user = userRepository.getByUsernameAndPassword(username, password);
-        return Optional.ofNullable(user).orElseThrow(UserNotexistException::new);
+        return Optional.ofNullable(user).orElseThrow(UserNotExistException::new);
     }
 }

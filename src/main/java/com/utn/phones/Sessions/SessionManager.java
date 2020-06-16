@@ -1,6 +1,6 @@
 package com.utn.phones.Sessions;
 
-import com.utn.phones.exceptions.loginExceptions.UserNotexistException;
+import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
 import com.utn.phones.model.User;
 import java.util.Date;
 import java.util.Hashtable;
@@ -50,9 +50,9 @@ public class SessionManager {
     }
   }
 
-  public User getCurrentUser(String token) throws UserNotexistException {
+  public User getCurrentUser(String token) throws UserNotExistException {
     return Optional.ofNullable(getSession(token))
         .map(Session::getLoggedUser)
-        .orElseThrow(UserNotexistException::new);
+        .orElseThrow(UserNotExistException::new);
   }
 }

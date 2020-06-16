@@ -1,14 +1,12 @@
 package com.utn.phones.controllers;
 
-import com.utn.phones.exceptions.loginExceptions.UserNotexistException;
+import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
 import com.utn.phones.exceptions.loginExceptions.ValidationException;
 import com.utn.phones.model.User;
 import com.utn.phones.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -26,11 +24,11 @@ public class UserController {
         return this.userService.findAll();
     }
 
-    public User login(String username, String password) throws UserNotexistException, ValidationException {
+    public User login(String username, String password) throws UserNotExistException, ValidationException {
         if ((username != null) && (password != null)) {
             return userService.login(username, password);
         } else {
-            throw new ValidationException("username or password are empty");
+            throw new ValidationException();
         }
     }
 }

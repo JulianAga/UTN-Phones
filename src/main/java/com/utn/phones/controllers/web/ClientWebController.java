@@ -5,7 +5,7 @@ import com.utn.phones.controllers.BillController;
 import com.utn.phones.controllers.CallController;
 import com.utn.phones.controllers.ClientController;
 import com.utn.phones.dto.BetweenDatesDto;
-import com.utn.phones.exceptions.loginExceptions.UserNotexistException;
+import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
 import com.utn.phones.model.Bill;
 import com.utn.phones.model.Call;
 import com.utn.phones.projections.MostCalled;
@@ -37,7 +37,7 @@ public class ClientWebController {
 
   @GetMapping("/top")
   public ResponseEntity<List<MostCalled>> findCallFromClient(
-      @RequestHeader("Authorization") String token) throws UserNotexistException {
+      @RequestHeader("Authorization") String token) throws UserNotExistException {
     return this.callController
         .findMostCalledCities(sessionManager.getCurrentUser(token).getId());
   }
@@ -46,7 +46,7 @@ public class ClientWebController {
   public ResponseEntity<List<Bill>> findBillBetweenDates(
       @RequestHeader("Authorization") String token,
       @RequestBody BetweenDatesDto betweenDatesDto)
-      throws UserNotexistException {
+      throws UserNotExistException {
     return this.billController
         .findBetweenDates(sessionManager.getCurrentUser(token).getId(), betweenDatesDto);
   }
@@ -54,7 +54,7 @@ public class ClientWebController {
   @GetMapping("/call")
   public ResponseEntity<List<Call>> findCallBetweenDates(
       @RequestHeader("Authorization") String token, @RequestBody BetweenDatesDto betweenDatesDto)
-      throws UserNotexistException {
+      throws UserNotExistException {
     return this.callController
         .findBetweenDates(betweenDatesDto, sessionManager.getCurrentUser(token).getId());
   }
