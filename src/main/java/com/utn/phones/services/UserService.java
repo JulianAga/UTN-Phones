@@ -1,7 +1,9 @@
 package com.utn.phones.services;
 
+import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
 import com.utn.phones.model.User;
 import com.utn.phones.repositories.UserRepository;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,5 +21,10 @@ public class UserService {
 
     public List<User> findAll() {
         return this.userRepository.findAll();
+    }
+
+    public User login(String username, String password) throws UserNotExistException {
+        User user = userRepository.getByUsernameAndPassword(username, password);
+        return Optional.ofNullable(user).orElseThrow(UserNotExistException::new);
     }
 }

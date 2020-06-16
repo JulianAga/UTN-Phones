@@ -16,8 +16,16 @@ public class TariffService {
     this.tariffRepository = tariffRepository;
   }
 
+  /***
+   * Consulta de tarifas
+   * @return List with tariffs
+   */
   public List<Tariff> findAll() {
     return this.tariffRepository.findAll();
+  }
+
+  public List<Tariff> findByOriginNameAndDestinyName(String originName, String destinyName) {
+    return this.tariffRepository.findByOriginCityNameAndDestinyCityName(originName, destinyName);
   }
 
 }
