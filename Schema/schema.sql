@@ -308,6 +308,9 @@ BEGIN
 END
 $$
 
+DELIMITER //
+CREATE INDEX index_calls ON calls (origin_phone_line, date);
+//
 
 DELIMITER $$
 CREATE VIEW calls_consult 
@@ -338,13 +341,33 @@ END
 $$
 
 
-
 /* Default Inserts */
 
 INSERT INTO provinces (name) VALUES ("Buenos Aires"), ("Catamarca"), ("Chaco"), ("Chubut"), ("Córdoba"), ("Corrientes"), ("Entre Ríos"), ("Formosa"), ("Jujuy"), ("La Pampa"), ("La Rioja"), ("Mendoza"), ("Misiones"), ("Neuquén"), ("Rio Negro"), ("Salta"), ("San Juan"), ("San Luis"), ("Santa Cruz"), ("Santa Fé"), ("Santiago del Estero"), ("Tierra del Fuego"), ("Tucumán");
 INSERT INTO line_types (type) VALUES ("home"), ("mobile");
 INSERT INTO user_types (type) VALUES ("client"), ("employee");
 
-use utn_phones;
-select * from calls;
-select * from bills;
+/* Users */
+
+CREATE USER 'spring_admin'@'localhost' IDENTIFIED BY '123';
+CREATE USER 'backoffice'@'localhost' IDENTIFIED BY '123';
+CREATE USER 'clients'@'localhost' IDENTIFIED BY '123';
+CREATE USER 'infrastructure'@'localhost' IDENTIFIED BY '123';
+CREATE USER 'billing'@'localhost' IDENTIFIED BY '123';
+
+GRANT ALL ON utn_phones.* TO 'spring_admin'@'localhost';
+
+GRANT ALL ON utn_phones.phone_lines TO 'backoffice'@'localhost';
+GRANT ALL ON utn_phones.users TO 'backoffice'@'localhost';
+GRANT ALL ON utn_phones.tariffs TO 'backoffice'@'localhost';
+
+GRANT SELECT ON utn_phones.calls TO 'clients'@'localhost';
+GRANT SELECT ON utn_phones.bills TO 'clients'@'localhost';
+
+GRANT INSERT ON utn_phones.calls TO 'infrastructure'@'localhost';
+GRANT TRIGGER ON utn_phones.* TO 'infrastructure'@'localhost';
+
+GRANT EVENT ON utn_phones.* TO 'billing'@'localhost';
+GRANT EXECUTE ON PROCEDURE utn_phones.generate_bill TO 'billing'@'localhost';
+GRANT EXECUTE ON PROCEDURE get_calls_total_cost_and_total_price TO 'billing'@'localhost';
+GRANT EXECUTE ON PROCEDURE set_bill TO 'billing'@'localhost';
