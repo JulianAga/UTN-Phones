@@ -32,6 +32,7 @@ CREATE TABLE users(
     surname VARCHAR(30),
     city INT,
     user_type INT,
+    active BOOLEAN DEFAULT TRUE,
     CONSTRAINT pk_id_user PRIMARY KEY (id),
     CONSTRAINT fk_id_city FOREIGN KEY (city) REFERENCES cities (id),
     CONSTRAINT fk_user_type FOREIGN KEY (user_type) REFERENCES user_types (id)
