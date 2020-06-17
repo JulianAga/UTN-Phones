@@ -49,6 +49,7 @@ CREATE TABLE phone_lines(
     line_type INT,
     user_id INT,
     suspended BOOLEAN DEFAULT FALSE,
+    active BOOLEAN DEFAULT TRUE,
     CONSTRAINT pk_id_phone_line PRIMARY KEY (id),
     CONSTRAINT fk_line_type FOREIGN KEY (line_type) REFERENCES line_types (id),
     CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users (id)
