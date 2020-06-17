@@ -1,5 +1,6 @@
 package com.utn.phones.services;
 
+import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
 import com.utn.phones.model.Tariff;
 import com.utn.phones.repositories.TariffRepository;
 import java.util.List;
@@ -20,12 +21,16 @@ public class TariffService {
    * Consulta de tarifas
    * @return List with tariffs
    */
-  public List<Tariff> findAll() {
+  public List<Tariff> findAll(String originName, String destinyName) throws CityNotFoundException {
+    if (originName != null && destinyName != null) {
+      try {
+        return this.tariffRepository
+            .findByOriginCityNameAndDestinyCityName(originName, destinyName);
+      }catch (Exception c){
+        throw new CityNotFoundException();
+      }
+    }
     return this.tariffRepository.findAll();
-  }
-
-  public List<Tariff> findByOriginNameAndDestinyName(String originName, String destinyName) {
-    return this.tariffRepository.findByOriginCityNameAndDestinyCityName(originName, destinyName);
   }
 
 }

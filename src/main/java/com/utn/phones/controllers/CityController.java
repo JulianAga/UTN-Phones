@@ -10,10 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/city")
 public class CityController {
     CityService cityService;
-
+//todo Eliminar city controller
     @Autowired
     public CityController(CityService cityService) {
         this.cityService = cityService;

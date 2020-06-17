@@ -5,8 +5,18 @@ import com.utn.phones.controllers.CallController;
 import com.utn.phones.controllers.ClientController;
 import com.utn.phones.controllers.PhoneLineController;
 import com.utn.phones.controllers.TariffController;
+import com.utn.phones.dto.BetweenDatesDto;
 import com.utn.phones.dto.OriginCityAndDestinyCityDto;
+import com.utn.phones.dto.PhoneLineDto;
+import com.utn.phones.dto.UserRequestDto;
+import com.utn.phones.exceptions.billExceptions.InvalidDateException;
+import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
+import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
+import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineNotExists;
+import com.utn.phones.model.Bill;
 import com.utn.phones.model.Call;
+import com.utn.phones.model.City;
+import com.utn.phones.model.Client;
 import com.utn.phones.model.PhoneLine;
 import com.utn.phones.model.Tariff;
 import java.util.List;
@@ -46,31 +56,75 @@ public class EmployeeWebController {
     this.callController = callController;
   }
 
+  //Consulta de tarifas
   @GetMapping("/tariff")
-  public ResponseEntity<List<Tariff>> getByOriginAndDestinyCityName(
+  public ResponseEntity<List<Tariff>> getByOriginAndDestinyCityName(@RequestBody
       OriginCityAndDestinyCityDto citiesDto) {
-    return this.tariffController.findByOriginNameAndDestinyName(citiesDto);
+    return (this.tariffController.findAll(citiesDto).isEmpty()) ? ResponseEntity.noContent().build() :
+        ResponseEntity.ok(this.tariffController.findAll(citiesDto));
   }
 
-  @PostMapping("/phone-line")
-  public void addPhoneLine(@RequestBody PhoneLine phoneLine) {
-    this.phoneLineController.save(phoneLine);
+  //Consulta de facturación
+  @GetMapping("/bill/{id}")
+  public ResponseEntity<List<Bill>> getBillsByUser(@PathVariable Integer id, @RequestBody
+      BetweenDatesDto betweenDatesDto) throws InvalidDateException {
+    return (this.billController.findBetweenDates(id, betweenDatesDto)).isEmpty() ? ResponseEntity
+        .noContent().build()
+        : ResponseEntity.ok(this.billController.findBetweenDates(id, betweenDatesDto));
   }
 
-  @DeleteMapping("/phone-line/{id}")
-  public void deletePhoneLine(@PathVariable Integer id) {
-    this.phoneLineController.deleteById(id);
-  }
-
-  @PutMapping("/phone-line/{id}")
-  public void suspendPhoneLine(@PathVariable Integer id) {
-    this.phoneLineController.suspendPhoneLine(id);
-  }
-
+  //Consulta de llamadas por usuario
   @GetMapping("/call/{id}")
   public ResponseEntity<List<Call>> getCallsByUser(@PathVariable Integer id) {
-    return this.callController.findCallsFromClient(id);
+    return (this.callController.findCallsFromClient(id).isEmpty()) ? ResponseEntity.noContent()
+        .build()
+        : ResponseEntity.ok(this.callController.findCallsFromClient(id));
+  }
+
+  /* ---------------Alta, baja y suspensión de lineas--------------- */
+  //Alta de linea
+  @PostMapping("/phone-line")
+  public ResponseEntity<?> addPhoneLine(@RequestBody PhoneLine phoneLine, @RequestBody City city) {
+    return ResponseEntity.created(this.phoneLineController.save(phoneLine, city)).build();
+  }
+
+  //Baja de linea
+  @DeleteMapping("/phone-line/{id}")
+  public ResponseEntity<?> deletePhoneLine(@PathVariable Integer id) throws PhoneLineNotExists {
+    this.phoneLineController.deleteById(id);
+    return ResponseEntity.ok().build();
+  }
+
+  //Suspensión de linea
+  @PutMapping("/phone-line/{id}")
+  public ResponseEntity<PhoneLine> updatePhoneLine(@RequestBody PhoneLineDto phoneLineDto,
+      @RequestBody City city, @PathVariable Integer id)
+      throws PhoneLineNotExists {
+    return ResponseEntity.ok(this.phoneLineController.update(phoneLineDto, city, id));
   }
 
 
+  /* ---------------Manejo de clientes--------------- */
+
+  //Alta de cliente
+  @PostMapping("/client")
+  public ResponseEntity<?> addClient(@RequestBody UserRequestDto client)
+      throws CityNotFoundException {
+    return ResponseEntity.created(this.clientController.save(client)).build();
+  }
+
+  //Baja de cliente
+  @DeleteMapping("/client/{id}")
+  public ResponseEntity<?> deleteClient(@PathVariable Integer id) throws ClientNotFoundException {
+    this.clientController.deleteById(id);
+    return ResponseEntity.ok().build();
+  }
+
+  //Update del cliente
+  @PutMapping("/client/{id}")
+  public ResponseEntity<Client> updateClient(@RequestBody UserRequestDto client,
+      @PathVariable Integer id)
+      throws ClientNotFoundException, CityNotFoundException {
+    return ResponseEntity.ok(this.clientController.update(id, client));
+  }
 }

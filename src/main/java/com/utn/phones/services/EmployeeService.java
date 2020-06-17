@@ -1,6 +1,7 @@
 package com.utn.phones.services;
 
-import com.utn.phones.dto.ClientRequestDto;
+import com.utn.phones.dto.UserRequestDto;
+import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
 import com.utn.phones.model.Employee;
 import com.utn.phones.repositories.EmployeeRepository;
 import java.util.List;
@@ -19,7 +20,7 @@ public class EmployeeService {
     this.cityService = cityService;
   }
 
-  public Employee save(ClientRequestDto clientDto) {
+  public Employee save(UserRequestDto clientDto) throws CityNotFoundException {
 
     Employee employee = new Employee();
     employee.setCity(cityService.findById(clientDto.getCity()));

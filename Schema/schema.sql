@@ -1,34 +1,6 @@
+DROP DATABASE utn_phones;
 CREATE DATABASE utn_phones;
-drop database utn_phones;
 USE utn_phones;
-
-select * from USERS;
-INSERT INTO users (dni, username, password, name, surname, city, user_type) VALUES ("40225328", "SasukeExco", "heno", "Sasuke", "Excoffon", 1, 1);
-SELECT * FROM PROVINCES;
-SELECT * FROM CITIES;
-INSERT INTO cities (prefix, name, province) VALUES (3541, "Carlos Paz", 5);
-select * from user_types;
-select * from line_types;
-select * from bills;
-select * from phone_lines;
-select * from tariffs;
-
-CREATE TABLE line_types(
-	id INT AUTO_INCREMENT,
-    type VARCHAR(30),
-    CONSTRAINT pk_id_line_type PRIMARY KEY (id)
-);
-
-CREATE TABLE phone_lines(
-	id INT AUTO_INCREMENT,
-    number VARCHAR(9) UNIQUE,
-    line_type INT,
-    CONSTRAINT pk_id_phone_line PRIMARY KEY (id),
-    CONSTRAINT fk_line_type FOREIGN KEY (line_type) REFERENCES line_types (id)
-);
-
-ALTER TABLE phone_lines ADD COLUMN user_id INT;
-ALTER TABLE phone_lines ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users (id);
 
 CREATE TABLE provinces(
 	id INT AUTO_INCREMENT,
@@ -60,6 +32,7 @@ CREATE TABLE users(
     surname VARCHAR(30),
     city INT,
     user_type INT,
+    active BOOLEAN DEFAULT TRUE,
     CONSTRAINT pk_id_user PRIMARY KEY (id),
     CONSTRAINT fk_id_city FOREIGN KEY (city) REFERENCES cities (id),
     CONSTRAINT fk_user_type FOREIGN KEY (user_type) REFERENCES user_types (id)
@@ -77,12 +50,11 @@ CREATE TABLE phone_lines(
     line_type INT,
     user_id INT,
     suspended BOOLEAN DEFAULT FALSE,
+    active BOOLEAN DEFAULT TRUE,
     CONSTRAINT pk_id_phone_line PRIMARY KEY (id),
     CONSTRAINT fk_line_type FOREIGN KEY (line_type) REFERENCES line_types (id),
     CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users (id)
 );
-
-INSERT INTO phone_lines (number, line_type, user_id) VALUES ("354158763",2, 2);
 
 CREATE TABLE bills(
 	id INT AUTO_INCREMENT,
@@ -98,14 +70,13 @@ CREATE TABLE bills(
     CONSTRAINT fk_id_phone_line FOREIGN KEY (phone_line) REFERENCES phone_lines(id)
 );
 
-INSERT INTO bills(quantity_of_calls, cost_price, total_price, date, expiring_date, client, phone_line) VALUES (2, 1, 5, "1999-06-25", "1999-06-30", 1, 1);
-
 CREATE TABLE tariffs(
-    id INT AUTO_INCREMENT,
-	  origin_city INT,
+	id INT AUTO_INCREMENT,
+	origin_city INT,
     destiny_city INT,
     cost_price FLOAT,
     price_per_minute FLOAT,
+    CONSTRAINT pk_id_tariff PRIMARY KEY (id),
     CONSTRAINT fk_origin_city FOREIGN KEY (origin_city) REFERENCES cities (id),
     CONSTRAINT fk_destiny_city FOREIGN KEY (destiny_city) REFERENCES cities (id)
 );
@@ -113,12 +84,12 @@ CREATE TABLE tariffs(
 CREATE TABLE calls(
 	id INT AUTO_INCREMENT,
     price_per_minute FLOAT,
-    duration TIME,
+    duration INT,
     date DATETIME,
     cost_price FLOAT,
     total_price FLOAT,
-    origin_phone_line VARCHAR(9),
-    destiny_phone_line VARCHAR(9),
+    origin_phone_line VARCHAR(15),
+    destiny_phone_line VARCHAR(15),
     id_origin_line INT,
     id_destiny_line INT,
     origin_city INT,
@@ -132,29 +103,6 @@ CREATE TABLE calls(
     CONSTRAINT fk_id_bill FOREIGN KEY (bill) REFERENCES bills (id)
 );
 
-/* Procedures */
-
-DELIMITER $$
-CREATE PROCEDURE add_city(IN province VARCHAR(30),IN city VARCHAR(30),IN prefix INT)
-BEGIN
-    DECLARE province_id INT;
-    SELECT id INTO province_id FROM provinces AS p WHERE p.name = province;
-    INSERT INTO cities(name,prefix,province) VALUES (city,prefix,province_id);
-END
-$$
-
-/*
-DELIMITER $$
-CREATE PROCEDURE add_call(IN origin_number VARCHAR(15), IN destiny_number VARCHAR(15), IN duration TIME, IN date DATETIME)
-BEGIN
-	DECLARE origin_city INT;
-    DECLARE destiny_city INT;
-    SET origin_city= get_city_from_number(origin_number);
-    SET destiny_city= get_city_from_number(destiny_number);
-    
-END
-$$
-*/
 /* Functions */
 
 DELIMITER %%
@@ -174,7 +122,6 @@ BEGIN
 END    
 %%
 
-DROP FUNCTION get_prefix;
 
 DELIMITER &&
 CREATE FUNCTION get_city_from_prefix(prefix INT) RETURNS INT
@@ -200,7 +147,7 @@ DELIMITER !!
 CREATE FUNCTION get_id_phone_by_number(number VARCHAR(15)) RETURNS INT
 BEGIN
 	DECLARE phone_id INT;
-    SET phone_id= (SELECT pl.id FROM phone_lines AS pl WHERE pl.number=number);
+    SET phone_id=  (IFNULL((SELECT id FROM phone_lines AS pl WHERE pl.number = number), 0));
     RETURN phone_id;
 END
 !!
@@ -216,6 +163,17 @@ BEGIN
 END
 $$
 
+DELIMITER $$
+CREATE FUNCTION get_user_from_id_phone(id_phone INT) RETURNS INT
+BEGIN
+	DECLARE user_id INT;
+    SET user_id= (SELECT u.id FROM users AS u INNER JOIN phone_lines AS pl WHERE pl.id=id_phone AND u.id=pl.user_id);
+	RETURN user_id;
+END
+$$
+
+
+
 DELIMITER //
 CREATE FUNCTION get_price_per_minute (origin_city INT, destiny_city INT) RETURNS FLOAT
 BEGIN
@@ -225,18 +183,165 @@ BEGIN
 END
 //
 
-/*calcular tambien los segundos!*/
+DELIMITER //
+CREATE FUNCTION get_cost_price (origin_city INT, destiny_city INT) RETURNS FLOAT
+BEGIN
+	DECLARE cost_price FLOAT;
+    SET cost_price= (SELECT t.cost_price FROM tariffs AS t WHERE t.origin_city=origin_city AND t.destiny_city=destiny_city);
+    RETURN cost_price;
+END
+//
+
+
 DELIMITER $$
-CREATE FUNCTION get_total_price (price_per_minute FLOAT, duration TIME) RETURNS FLOAT
+CREATE FUNCTION get_total_price (price_per_minute FLOAT, duration INT) RETURNS FLOAT
 BEGIN
 	DECLARE total_price FLOAT;
-    DECLARE minutes INT;
-    SET minutes= (SELECT EXTRACT(MINUTE FROM duration));
-    SET total_price= price_per_minute * minutes;
-    RETURN total_price;
+    SET total_price= (duration/60) * price_per_minute;
+    RETURN ROUND(total_price, 2);
 END
 $$
-DROP FUNCTION get_total_price;
+
+DELIMITER $$
+CREATE FUNCTION get_total_cost_price (cost_price FLOAT, duration INT) RETURNS FLOAT
+BEGIN
+	DECLARE total_cost_price FLOAT;
+    SET total_cost_price= (duration/60) * cost_price;
+    RETURN ROUND(total_cost_price, 2);
+END
+$$
+
+DELIMITER //
+CREATE FUNCTION get_id_tariff(origin_number VARCHAR(15), destiny_number VARCHAR(15))
+RETURNS INT
+BEGIN
+	DECLARE tariff_id int;
+	SET tariff_id =IFNULL((SELECT t.id FROM tariffs AS t WHERE t.origin_city = get_city_from_number(origin_number) AND t.destiny_city = get_city_from_number(destiny_number)), 0);
+	RETURN tariff_id;
+END
+//
+
+/* Procedures, triggers, events */
+
+DELIMITER $$
+CREATE PROCEDURE throw_signal(IN id_origin_phone INT, IN id_destiny_phone INT, IN tariff_id INT)
+BEGIN
+	IF(id_origin_phone = 0)THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid origin number', MYSQL_ERRNO = 0001;
+	END IF;
+	IF(id_destiny_phone = 0)THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid destiny number', MYSQL_ERRNO = 0002;
+	END IF;
+	IF(tariff_id = 0)THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'There is no tariff for those cities', MYSQL_ERRNO = 0003;
+	END IF;
+END $$
+
+DELIMITER $$
+CREATE TRIGGER add_call BEFORE INSERT ON calls FOR EACH ROW
+BEGIN
+    DECLARE tariff_id INT;
+	SET new.id_origin_line= get_id_phone_by_number(new.origin_phone_line);
+    SET new.id_destiny_line= get_id_phone_by_number(new.destiny_phone_line);
+    SET new.origin_city=get_city_from_number(new.origin_phone_line);
+    SET new.destiny_city=get_city_from_number(new.destiny_phone_line);
+    SET new.price_per_minute= get_price_per_minute(new.origin_city, new.destiny_city);
+    SET new.cost_price= get_total_cost_price(get_cost_price(new.origin_city, new.destiny_city), new.duration);
+	SET new.total_price= get_total_price(new.price_per_minute, new.duration);
+    
+
+    SET tariff_id= get_id_tariff(new.origin_phone_line, new.destiny_phone_line);
+    CALL throw_signal(new.id_origin_line, new.id_destiny_line, tariff_id);
+END
+$$
+
+DELIMITER //
+CREATE PROCEDURE get_calls_total_cost_and_total_price(IN id_phone_line INT, OUT quantity_of_calls INT, OUT cost_price FLOAT, OUT total_price FLOAT)
+BEGIN
+	SET cost_price = IFNULL((SELECT SUM(c.cost_price) FROM calls AS c WHERE id_origin_line = id_phone_line AND ISNULL(bill)), 0);
+    SET total_price = IFNULL((SELECT SUM(c.total_price) FROM calls AS c WHERE id_origin_line = id_phone_line  AND ISNULL(bill)), 0);
+	SET quantity_of_calls = IFNULL((SELECT COUNT(c.id) FROM calls AS c WHERE id_origin_line = id_phone_line  AND ISNULL(bill)), 0);
+END
+//
+
+
+DELIMITER $$
+CREATE PROCEDURE set_bill(IN bill_id int,IN id_phone_line INT)
+BEGIN
+	UPDATE calls SET bill = bill_id WHERE id_origin_line = id_phone_line;
+END
+$$
+
+DELIMITER $$
+CREATE PROCEDURE generate_bill()
+BEGIN
+		DECLARE id_phone_line int;
+		DECLARE end INT DEFAULT 0;
+        DECLARE client INT;
+		DECLARE cursor_phone_lines CURSOR FOR SELECT id FROM utn_phones.phone_lines;
+		DECLARE CONTINUE HANDLER FOR NOT FOUND SET end = TRUE;
+	START TRANSACTION;
+		OPEN cursor_phone_lines;
+			loop_phone_lines:LOOP
+				FETCH cursor_phone_lines INTO id_phone_line;
+				IF end = 1 THEN
+					LEAVE loop_phone_lines;
+				END IF;
+                SET client = get_user_from_id_phone(id_phone_line);
+				CALL get_calls_total_cost_and_total_price(id_phone_line, @quantity_of_calls, @cost_price, @total_price);
+				INSERT INTO utn_phones.bills(phone_line, quantity_of_calls , cost_price , total_price, expiring_date, date, client ) VALUES (id_phone_line, @quantity_of_calls, @cost_price, @total_price, NOW() + INTERVAL 15 day, CURDATE(), client);
+				CALL set_bill(last_insert_id(), id_phone_line);
+			END LOOP;
+		CLOSE cursor_phone_lines;
+	COMMIT;
+END
+$$
+
+
+DELIMITER $$
+SET GLOBAL event_scheduler = ON;
+CREATE EVENT IF NOT EXISTS event_generate_bill ON SCHEDULE
+EVERY 1 MONTH
+STARTS '2020-06-01 00:00:00'
+ENABLE
+DO
+BEGIN
+	CALL generate_bill();
+END
+$$
+
+DELIMITER //
+CREATE INDEX index_calls ON calls (origin_phone_line, date);
+//
+
+DELIMITER $$
+CREATE VIEW calls_consult 
+AS
+SELECT c.origin_phone_line, c.origin_city AS origin_city, c.destiny_phone_line, c.destiny_city, c.total_price, c.duration, c.date, pl.user_id FROM calls AS c INNER JOIN phone_lines AS pl ON pl.id=c.id_origin_line;
+$$
+
+
+DELIMITER //
+CREATE PROCEDURE calls_by_user (IN client INT)
+BEGIN
+	SELECT * FROM calls_consult WHERE user_id=client;
+END
+//
+
+DELIMITER $$
+CREATE PROCEDURE calls_by_date (IN from_date DATE, IN to_date DATE)
+BEGIN
+	SELECT * FROM calls_consult WHERE date BETWEEN from_date AND to_date;
+END
+$$
+
+DELIMITER $$
+CREATE PROCEDURE calls_by_date_and_user (IN user INT,IN from_date DATE, IN to_date DATE)
+BEGIN
+	 SELECT * FROM calls_consult WHERE user_id=user AND date BETWEEN from_date AND to_date;
+END
+$$
+
 
 /* Default Inserts */
 
@@ -244,36 +349,27 @@ INSERT INTO provinces (name) VALUES ("Buenos Aires"), ("Catamarca"), ("Chaco"), 
 INSERT INTO line_types (type) VALUES ("home"), ("mobile");
 INSERT INTO user_types (type) VALUES ("client"), ("employee");
 
-/* Procedures calls */
+/* Users */
 
-CALL add_city("Buenos Aires", "Mar del Plata", 223);
-CALL add_city("Buenos Aires", "Buenos Aires", 11);
+CREATE USER 'spring_admin'@'localhost' IDENTIFIED BY '123';
+CREATE USER 'backoffice'@'localhost' IDENTIFIED BY '123';
+CREATE USER 'clients'@'localhost' IDENTIFIED BY '123';
+CREATE USER 'infrastructure'@'localhost' IDENTIFIED BY '123';
+CREATE USER 'billing'@'localhost' IDENTIFIED BY '123';
 
-/* Testing */
+GRANT ALL ON utn_phones.* TO 'spring_admin'@'localhost';
 
-INSERT INTO users (dni, username, password, name, surname, city, user_type) VALUES ("41715326", "florchiexco", "123", "Florencia", "Excoffon", 1, 1);
-INSERT INTO phone_lines (number, line_type, user_id) VALUES ("113542694", 1, 1);
-INSERT INTO tariffs (origin_city, destiny_city, price_per_minute, cost_price) VALUES (1, 2, 1.5, 1);
+GRANT ALL ON utn_phones.phone_lines TO 'backoffice'@'localhost';
+GRANT ALL ON utn_phones.users TO 'backoffice'@'localhost';
+GRANT ALL ON utn_phones.tariffs TO 'backoffice'@'localhost';
 
-DELIMITER $$
-CREATE PROCEDURE testing()
-BEGIN
-	DECLARE city_id INT;
-    DECLARE phone_id INT;
-    DECLARE user INT;
-    DECLARE price_per_minute FLOAT;
-    DECLARE total_price FLOAT;
+GRANT SELECT ON utn_phones.calls TO 'clients'@'localhost';
+GRANT SELECT ON utn_phones.bills TO 'clients'@'localhost';
 
-    
-    SET price_per_minute= get_price_per_minute(1, 2);
-    SET city_id= get_city_from_number(113542694);
-    SET phone_id= get_id_phone_by_number(113542694);
-    SET user= get_user_from_number(113542694);
-    SET total_price= get_total_price(price_per_minute, "00:01:30");
+GRANT INSERT ON utn_phones.calls TO 'infrastructure'@'localhost';
+GRANT TRIGGER ON utn_phones.* TO 'infrastructure'@'localhost';
 
-    SELECT price_per_minute, user, city_id, phone_id, total_price;
-END;
-$$
-
-CALL testing;
-DROP PROCEDURE testing;
+GRANT EVENT ON utn_phones.* TO 'billing'@'localhost';
+GRANT EXECUTE ON PROCEDURE utn_phones.generate_bill TO 'billing'@'localhost';
+GRANT EXECUTE ON PROCEDURE get_calls_total_cost_and_total_price TO 'billing'@'localhost';
+GRANT EXECUTE ON PROCEDURE set_bill TO 'billing'@'localhost';

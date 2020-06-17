@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ClientRequestDto {
+public class UserRequestDto {
 
   private String dni;
 

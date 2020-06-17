@@ -1,6 +1,7 @@
 package com.utn.phones.controllers;
 
-import com.utn.phones.dto.ClientRequestDto;
+import com.utn.phones.dto.UserRequestDto;
+import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
 import com.utn.phones.model.Employee;
 import com.utn.phones.services.EmployeeService;
 import java.util.List;
@@ -23,7 +24,7 @@ public class EmployeeController {
   }
 
   @PostMapping("/")
-  public Employee save(@RequestBody ClientRequestDto client) {
+  public Employee save(@RequestBody UserRequestDto client) throws CityNotFoundException {
     return this.employeeService.save(client);
   }
 

@@ -54,4 +54,6 @@ public class User {
   @JoinColumn(name = "user_type", insertable = false, updatable = false)
   private UserType userType;
 
+  private Boolean active = true;
+
 }

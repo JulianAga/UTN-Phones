@@ -1,10 +1,13 @@
 package com.utn.phones.services;
 
+import com.utn.phones.dto.PhoneLineDto;
+import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineAlreadyExists;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineNotExists;
+import com.utn.phones.model.City;
 import com.utn.phones.model.PhoneLine;
 import com.utn.phones.repositories.PhoneLineRepository;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,23 +22,35 @@ public class PhoneLineService {
   }
 
   public List<PhoneLine> findAll() {
-    return this.phoneLineRepository.findAll();
+    return this.phoneLineRepository.findAll().stream()
+        .filter(phoneLine -> phoneLine.getActive() == Boolean.TRUE)
+        .collect(Collectors.toList());
   }
 
-  public PhoneLine save(PhoneLine phoneLine) {
+  public PhoneLine save(PhoneLine phoneLine, City city) throws PhoneLineAlreadyExists {
+    if (this.phoneLineRepository.findByNumber(phoneLine.getNumber()) != null) {
+      throw new PhoneLineAlreadyExists();
+    }
+    phoneLine.setNumber(city.getPrefix() + phoneLine.getNumber());
     return this.phoneLineRepository.save(phoneLine);
   }
 
-  public PhoneLine findByNumber(String number) throws PhoneLineNotExists {
-    return Optional.ofNullable(phoneLineRepository.findByNumber(number))
+  public PhoneLine findById(Integer id) throws PhoneLineNotExists {
+    return this.phoneLineRepository.findById(id)
         .orElseThrow(PhoneLineNotExists::new);
   }
 
-  public void deleteById(Integer id){
-    this.phoneLineRepository.deleteById(id);
+  public void deleteById(Integer id) throws PhoneLineNotExists {
+    PhoneLine phoneLine = this.findById(id);
+    phoneLine.setActive(Boolean.FALSE);
+    this.phoneLineRepository.save(phoneLine);
   }
 
-  public void suspendPhoneLine(Integer id){
-    this.phoneLineRepository.findById(id);
+  public PhoneLine update(PhoneLineDto phoneLineDto, City city, Integer id)
+      throws PhoneLineNotExists {
+    PhoneLine phoneLine = this.findById(id);
+    phoneLine.setNumber(city.getPrefix() + phoneLineDto.getNumber());
+    phoneLine.setSuspended(phoneLineDto.getSuspended());
+    return this.phoneLineRepository.save(phoneLine);
   }
 }

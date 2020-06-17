@@ -25,17 +25,17 @@ public class CallController {
     this.callService = callService;
   }
 
-  public ResponseEntity<List<MostCalled>> findMostCalledCities(@PathVariable Integer id) {
-    return ResponseEntity.ok(callService.findMostCalledCities(id));
+  public List<MostCalled> findMostCalledCities(@PathVariable Integer id) {
+    return callService.findMostCalledCities(id);
   }
 
-  public ResponseEntity<List<Call>> findBetweenDates(BetweenDatesDto callBetweenDatesDto,
+  public List<Call> findBetweenDates(BetweenDatesDto callBetweenDatesDto,
       Integer id) {
-    return ResponseEntity.ok(this.callService.findBetweenDates(id, callBetweenDatesDto));
+    return this.callService.findBetweenDates(id, callBetweenDatesDto);
   }
 
-  public ResponseEntity<List<Call>> findCallsFromClient(@PathVariable Integer id) {
-    return ResponseEntity.ok(this.callService.findCallsFromClient(id));
+  public List<Call> findCallsFromClient(@PathVariable Integer id) {
+    return this.callService.findCallsFromClient(id);
   }
 
   public URI save(CallRequestDto callRequestDto) {

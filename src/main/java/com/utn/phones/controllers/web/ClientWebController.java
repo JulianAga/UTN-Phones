@@ -5,6 +5,7 @@ import com.utn.phones.controllers.BillController;
 import com.utn.phones.controllers.CallController;
 import com.utn.phones.controllers.ClientController;
 import com.utn.phones.dto.BetweenDatesDto;
+import com.utn.phones.exceptions.billExceptions.InvalidDateException;
 import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
 import com.utn.phones.model.Bill;
 import com.utn.phones.model.Call;
@@ -35,28 +36,40 @@ public class ClientWebController {
     this.sessionManager = sessionManager;
   }
 
+  //Consulta de destinos mas llamados por el usuario
   @GetMapping("/top")
   public ResponseEntity<List<MostCalled>> findCallFromClient(
       @RequestHeader("Authorization") String token) throws UserNotExistException {
     return this.callController
-        .findMostCalledCities(sessionManager.getCurrentUser(token).getId());
+        .findMostCalledCities(sessionManager.getCurrentUser(token).getId()).isEmpty()
+        ? ResponseEntity.noContent().build() :
+        ResponseEntity.ok(this.callController
+            .findMostCalledCities(sessionManager.getCurrentUser(token).getId()));
   }
 
+  //Consulta del facturas del usuario logueado por rango de fechas
   @GetMapping("/bill")
   public ResponseEntity<List<Bill>> findBillBetweenDates(
       @RequestHeader("Authorization") String token,
       @RequestBody BetweenDatesDto betweenDatesDto)
-      throws UserNotExistException {
+      throws UserNotExistException, InvalidDateException {
     return this.billController
-        .findBetweenDates(sessionManager.getCurrentUser(token).getId(), betweenDatesDto);
+        .findBetweenDates(sessionManager.getCurrentUser(token).getId(), betweenDatesDto).isEmpty()
+        ? ResponseEntity.noContent().build() :
+        ResponseEntity.ok(this.billController
+            .findBetweenDates(sessionManager.getCurrentUser(token).getId(), betweenDatesDto));
   }
 
+  //Consulta de llamadas del usuario por rango de fechas
   @GetMapping("/call")
   public ResponseEntity<List<Call>> findCallBetweenDates(
       @RequestHeader("Authorization") String token, @RequestBody BetweenDatesDto betweenDatesDto)
       throws UserNotExistException {
-    return this.callController
-        .findBetweenDates(betweenDatesDto, sessionManager.getCurrentUser(token).getId());
+    return (this.callController
+        .findBetweenDates(betweenDatesDto, sessionManager.getCurrentUser(token).getId()).isEmpty())
+        ? ResponseEntity.noContent().build() :
+        ResponseEntity.ok(this.callController
+            .findBetweenDates(betweenDatesDto, sessionManager.getCurrentUser(token).getId()));
   }
 
 

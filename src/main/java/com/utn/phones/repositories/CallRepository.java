@@ -16,13 +16,14 @@ public interface CallRepository extends JpaRepository<Call, Integer> {
    * @param userId id client
    * @return Most called cities projection
    */
-  @Query(value = "select cities.name as cityName, count(cities.id) as cant"
-      + " from calls \n" +
-      "inner join cities on calls.destiny_city = cities.id\n" +
-      "inner join phone_lines on phone_lines.user_id = ?1\n" +
-      "group by cities.id\n" +
-      "order by(Cant) desc\n" +
-      "LIMIT 10;", nativeQuery = true)
+  @Query(value = "select cities.name as cityName, count(cities.id) as cant\n"
+      + "from calls\n"
+      + "inner join cities on calls.destiny_city = cities.id\n"
+      + "inner join phone_lines on calls.id_origin_line=phone_lines.id\n"
+      + "where phone_lines.user_id = ?1\n"
+      + "group by cities.id\n"
+      + "order by(Cant) desc\n"
+      + "LIMIT 10;", nativeQuery = true)
   List<MostCalled> findMostCalledCities(Integer userId);
 
   /***
@@ -41,4 +42,5 @@ public interface CallRepository extends JpaRepository<Call, Integer> {
    * @return calls from this client
    */
   List<Call> findAllByOriginLineClientId(Integer userId);
+
 }

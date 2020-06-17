@@ -7,31 +7,22 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/tariff")
 public class TariffController {
 
-  TariffService tariffService;
+  private TariffService tariffService;
 
   @Autowired
   public TariffController(TariffService tariffService) {
     this.tariffService = tariffService;
   }
 
-  @GetMapping()
-  public List<Tariff> findAll() {
-    return this.tariffService.findAll();
-  }
-  
-  public ResponseEntity<List<Tariff>> findByOriginNameAndDestinyName(@RequestBody
+  public List<Tariff> findAll(
       OriginCityAndDestinyCityDto originCityAndDestinyCityDto) {
-    return ResponseEntity.ok(this.tariffService
-        .findByOriginNameAndDestinyName(originCityAndDestinyCityDto.getOriginCity(),
-            originCityAndDestinyCityDto.getDestinyCity()));
+    return this.tariffService.findAll(originCityAndDestinyCityDto.getOriginCity(),
+        originCityAndDestinyCityDto.getDestinyCity());
   }
-
 }

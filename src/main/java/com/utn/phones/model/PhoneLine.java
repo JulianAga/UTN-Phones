@@ -46,4 +46,7 @@ public class PhoneLine {
   private Client client;
 
   private Boolean suspended = false;
+
+  private Boolean active = true;
+
 }

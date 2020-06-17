@@ -9,8 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class UserController {
     private UserService userService;
 
@@ -19,7 +20,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/")
     public List<User> findAll(){
         return this.userService.findAll();
     }
