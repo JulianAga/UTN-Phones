@@ -224,7 +224,7 @@ END
 /* Procedures, triggers, events */
 
 DELIMITER $$
-CREATE PROCEDURE throw_signal(IN id_origin_phone INT, IN id_destiny_phone INT, IN tariff_id INT)
+CREATE PROCEDURE throw_signal(IN id_origin_phone INT, IN id_destiny_phone INT)
 BEGIN
 	IF(id_origin_phone = 0)THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid origin number', MYSQL_ERRNO = 0001;
@@ -232,26 +232,43 @@ BEGIN
 	IF(id_destiny_phone = 0)THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid destiny number', MYSQL_ERRNO = 0002;
 	END IF;
-	IF(tariff_id = 0)THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'There is no tariff for those cities', MYSQL_ERRNO = 0003;
-	END IF;
 END $$
+
+DELIMITER //
+CREATE PROCEDURE add_new_tariff (IN origin_city INT, IN destiny_city INT)
+BEGIN
+	DECLARE price_per_minute FLOAT;
+    DECLARE cost_price FLOAT;
+    SET price_per_minute= (RAND() * (10 - 1)) + 1;
+    SET cost_price= (RAND() * (10 - 1)) + 1;
+	INSERT INTO tariffs (origin_city, destiny_city, price_per_minute, cost_price) VALUES (origin_city, destiny_city, price_per_minute, cost_price);
+    INSERT INTO tariffs (origin_city, destiny_city, price_per_minute, cost_price) VALUES (destiny_city, origin_city, price_per_minute, cost_price);
+END
+//
 
 DELIMITER $$
 CREATE TRIGGER add_call BEFORE INSERT ON calls FOR EACH ROW
 BEGIN
     DECLARE tariff_id INT;
+    DECLARE tariff_id_exists INT;
+    
 	SET new.id_origin_line= get_id_phone_by_number(new.origin_phone_line);
     SET new.id_destiny_line= get_id_phone_by_number(new.destiny_phone_line);
     SET new.origin_city=get_city_from_number(new.origin_phone_line);
     SET new.destiny_city=get_city_from_number(new.destiny_phone_line);
+    
+	SET tariff_id_exists= get_id_tariff(new.origin_phone_line, new.destiny_phone_line);
+    IF (tariff_id_exists=0) THEN
+		CALL add_new_tariff(new.origin_city, new.destiny_city);
+    END IF;
+    
     SET new.price_per_minute= get_price_per_minute(new.origin_city, new.destiny_city);
     SET new.cost_price= get_total_cost_price(get_cost_price(new.origin_city, new.destiny_city), new.duration);
 	SET new.total_price= get_total_price(new.price_per_minute, new.duration);
     
 
     SET tariff_id= get_id_tariff(new.origin_phone_line, new.destiny_phone_line);
-    CALL throw_signal(new.id_origin_line, new.id_destiny_line, tariff_id);
+    CALL throw_signal(new.id_origin_line, new.id_destiny_line);
 END
 $$
 
@@ -271,6 +288,8 @@ BEGIN
 	UPDATE calls SET bill = bill_id WHERE id_origin_line = id_phone_line;
 END
 $$
+
+
 
 DELIMITER $$
 CREATE PROCEDURE generate_bill()
@@ -348,6 +367,7 @@ $$
 INSERT INTO provinces (name) VALUES ("Buenos Aires"), ("Catamarca"), ("Chaco"), ("Chubut"), ("Córdoba"), ("Corrientes"), ("Entre Ríos"), ("Formosa"), ("Jujuy"), ("La Pampa"), ("La Rioja"), ("Mendoza"), ("Misiones"), ("Neuquén"), ("Rio Negro"), ("Salta"), ("San Juan"), ("San Luis"), ("Santa Cruz"), ("Santa Fé"), ("Santiago del Estero"), ("Tierra del Fuego"), ("Tucumán");
 INSERT INTO line_types (type) VALUES ("home"), ("mobile");
 INSERT INTO user_types (type) VALUES ("client"), ("employee");
+
 
 /* Users */
 
