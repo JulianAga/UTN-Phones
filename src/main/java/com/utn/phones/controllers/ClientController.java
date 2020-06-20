@@ -3,6 +3,7 @@ package com.utn.phones.controllers;
 import com.utn.phones.dto.UserRequestDto;
 import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
 import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
+import com.utn.phones.exceptions.generalExceptions.ResourceAlreadyExistException;
 import com.utn.phones.model.Client;
 import com.utn.phones.services.ClientService;
 import java.net.URI;
@@ -24,20 +25,21 @@ public class ClientController {
     this.clientService = clientService;
   }
 
-  public URI save(@RequestBody UserRequestDto client) throws CityNotFoundException {
+  public URI save(@RequestBody UserRequestDto client)
+      throws CityNotFoundException, ResourceAlreadyExistException {
     return getLocation(this.clientService.saveDto(client));
   }
 
-  public ResponseEntity<List<Client>> findAll() {
-    return ResponseEntity.ok(this.clientService.findAll());
+  public List<Client> findAll() {
+    return this.clientService.findAll();
   }
 
-  public ResponseEntity<Client> findById(@PathVariable Integer id) throws Exception {
-    return ResponseEntity.ok(this.clientService.findById(id));
+  public Client findById(@PathVariable Integer id) throws Exception {
+    return this.clientService.findById(id);
   }
 
   public Client update(Integer id, UserRequestDto client)
-      throws ClientNotFoundException, CityNotFoundException {
+      throws ClientNotFoundException, CityNotFoundException, ResourceAlreadyExistException {
     return this.clientService.update(id,client);
   }
 

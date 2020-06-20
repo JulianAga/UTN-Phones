@@ -20,17 +20,6 @@ public class EmployeeService {
     this.cityService = cityService;
   }
 
-  public Employee save(UserRequestDto clientDto) throws CityNotFoundException {
-
-    Employee employee = new Employee();
-    employee.setCity(cityService.findById(clientDto.getCity()));
-    employee.setUsername(clientDto.getUsername());
-    employee.setDNI(clientDto.getDni());
-    employee.setName(clientDto.getName());
-    employee.setSurname(clientDto.getSurname());
-    employee.setPassword(clientDto.getPassword());
-    return this.employeeRepository.save(employee);
-  }
 
   public List<Employee> findAll() {
     return this.employeeRepository.findAll();

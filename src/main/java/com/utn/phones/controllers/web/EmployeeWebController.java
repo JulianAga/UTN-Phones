@@ -1,5 +1,6 @@
 package com.utn.phones.controllers.web;
 
+import com.sun.jndi.toolkit.url.Uri;
 import com.utn.phones.controllers.BillController;
 import com.utn.phones.controllers.CallController;
 import com.utn.phones.controllers.ClientController;
@@ -9,9 +10,12 @@ import com.utn.phones.dto.BetweenDatesDto;
 import com.utn.phones.dto.OriginCityAndDestinyCityDto;
 import com.utn.phones.dto.PhoneLineDto;
 import com.utn.phones.dto.UserRequestDto;
-import com.utn.phones.exceptions.billExceptions.InvalidDateException;
+import com.utn.phones.exceptions.callExceptions.CallNotFoundException;
+import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
 import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
+import com.utn.phones.exceptions.generalExceptions.ResourceAlreadyExistException;
+import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineAlreadyExists;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineNotExists;
 import com.utn.phones.model.Bill;
 import com.utn.phones.model.Call;
@@ -19,6 +23,7 @@ import com.utn.phones.model.City;
 import com.utn.phones.model.Client;
 import com.utn.phones.model.PhoneLine;
 import com.utn.phones.model.Tariff;
+import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +64,7 @@ public class EmployeeWebController {
   //Consulta de tarifas
   @GetMapping("/tariff")
   public ResponseEntity<List<Tariff>> getByOriginAndDestinyCityName(@RequestBody
-      OriginCityAndDestinyCityDto citiesDto) {
+      OriginCityAndDestinyCityDto citiesDto) throws CityNotFoundException {
     return (this.tariffController.findAll(citiesDto).isEmpty()) ? ResponseEntity.noContent().build() :
         ResponseEntity.ok(this.tariffController.findAll(citiesDto));
   }
@@ -75,7 +80,8 @@ public class EmployeeWebController {
 
   //Consulta de llamadas por usuario
   @GetMapping("/call/{id}")
-  public ResponseEntity<List<Call>> getCallsByUser(@PathVariable Integer id) {
+  public ResponseEntity<List<Call>> getCallsByUser(@PathVariable Integer id)
+      throws CallNotFoundException {
     return (this.callController.findCallsFromClient(id).isEmpty()) ? ResponseEntity.noContent()
         .build()
         : ResponseEntity.ok(this.callController.findCallsFromClient(id));
@@ -84,7 +90,8 @@ public class EmployeeWebController {
   /* ---------------Alta, baja y suspensión de lineas--------------- */
   //Alta de linea
   @PostMapping("/phone-line")
-  public ResponseEntity<?> addPhoneLine(@RequestBody PhoneLine phoneLine, @RequestBody City city) {
+  public ResponseEntity<?> addPhoneLine(@RequestBody PhoneLine phoneLine, @RequestBody City city)
+      throws PhoneLineAlreadyExists {
     return ResponseEntity.created(this.phoneLineController.save(phoneLine, city)).build();
   }
 
@@ -109,8 +116,9 @@ public class EmployeeWebController {
   //Alta de cliente
   @PostMapping("/client")
   public ResponseEntity<?> addClient(@RequestBody UserRequestDto client)
-      throws CityNotFoundException {
-    return ResponseEntity.created(this.clientController.save(client)).build();
+      throws CityNotFoundException, ResourceAlreadyExistException {
+    URI uri = this.clientController.save(client);
+    return ResponseEntity.created(uri).body(uri.toString());
   }
 
   //Baja de cliente
@@ -124,7 +132,13 @@ public class EmployeeWebController {
   @PutMapping("/client/{id}")
   public ResponseEntity<Client> updateClient(@RequestBody UserRequestDto client,
       @PathVariable Integer id)
-      throws ClientNotFoundException, CityNotFoundException {
+      throws ClientNotFoundException, CityNotFoundException, ResourceAlreadyExistException {
     return ResponseEntity.ok(this.clientController.update(id, client));
+  }
+
+  //Obtener cliente
+  @GetMapping("/client/{id}")
+  public ResponseEntity<Client> findClient(@PathVariable Integer id) throws Exception {
+    return ResponseEntity.ok(this.clientController.findById(id));
   }
 }

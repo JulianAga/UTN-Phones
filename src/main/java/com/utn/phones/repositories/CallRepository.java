@@ -1,7 +1,7 @@
 package com.utn.phones.repositories;
 
+import com.utn.phones.dto.MostCalledDto;
 import com.utn.phones.model.Call;
-import com.utn.phones.projections.MostCalled;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,7 +24,7 @@ public interface CallRepository extends JpaRepository<Call, Integer> {
       + "group by cities.id\n"
       + "order by(Cant) desc\n"
       + "LIMIT 10;", nativeQuery = true)
-  List<MostCalled> findMostCalledCities(Integer userId);
+  List<MostCalledDto> findMostCalledCities(Integer userId);
 
   /***
    * Consulta de facturas del usuario por rango de fecha

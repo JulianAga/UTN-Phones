@@ -1,6 +1,7 @@
 package com.utn.phones.controllers;
 
 import com.utn.phones.dto.PhoneLineDto;
+import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineAlreadyExists;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineNotExists;
 import com.utn.phones.model.City;
 import com.utn.phones.model.PhoneLine;
@@ -25,7 +26,7 @@ public class PhoneLineController {
     return this.phoneLineService.findAll();
   }
 
-  public URI save(PhoneLine phoneLine,City city) {
+  public URI save(PhoneLine phoneLine,City city) throws PhoneLineAlreadyExists {
     return getLocation(phoneLineService.save(phoneLine,city));
   }
 

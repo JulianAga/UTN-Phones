@@ -5,11 +5,12 @@ import com.utn.phones.controllers.BillController;
 import com.utn.phones.controllers.CallController;
 import com.utn.phones.controllers.ClientController;
 import com.utn.phones.dto.BetweenDatesDto;
-import com.utn.phones.exceptions.billExceptions.InvalidDateException;
+import com.utn.phones.dto.MostCalledDto;
+import com.utn.phones.exceptions.callExceptions.CallNotFoundException;
+import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
 import com.utn.phones.model.Bill;
 import com.utn.phones.model.Call;
-import com.utn.phones.projections.MostCalled;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +39,9 @@ public class ClientWebController {
 
   //Consulta de destinos mas llamados por el usuario
   @GetMapping("/top")
-  public ResponseEntity<List<MostCalled>> findCallFromClient(
-      @RequestHeader("Authorization") String token) throws UserNotExistException {
+  public ResponseEntity<List<MostCalledDto>> findCallFromClient(
+      @RequestHeader("Authorization") String token)
+      throws UserNotExistException, CallNotFoundException {
     return this.callController
         .findMostCalledCities(sessionManager.getCurrentUser(token).getId()).isEmpty()
         ? ResponseEntity.noContent().build() :
@@ -64,7 +66,7 @@ public class ClientWebController {
   @GetMapping("/call")
   public ResponseEntity<List<Call>> findCallBetweenDates(
       @RequestHeader("Authorization") String token, @RequestBody BetweenDatesDto betweenDatesDto)
-      throws UserNotExistException {
+      throws UserNotExistException, InvalidDateException {
     return (this.callController
         .findBetweenDates(betweenDatesDto, sessionManager.getCurrentUser(token).getId()).isEmpty())
         ? ResponseEntity.noContent().build() :

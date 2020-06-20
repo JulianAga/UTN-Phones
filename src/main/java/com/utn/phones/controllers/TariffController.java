@@ -1,6 +1,7 @@
 package com.utn.phones.controllers;
 
 import com.utn.phones.dto.OriginCityAndDestinyCityDto;
+import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
 import com.utn.phones.model.Tariff;
 import com.utn.phones.services.TariffService;
 import java.util.List;
@@ -21,7 +22,7 @@ public class TariffController {
   }
 
   public List<Tariff> findAll(
-      OriginCityAndDestinyCityDto originCityAndDestinyCityDto) {
+      OriginCityAndDestinyCityDto originCityAndDestinyCityDto) throws CityNotFoundException {
     return this.tariffService.findAll(originCityAndDestinyCityDto.getOriginCity(),
         originCityAndDestinyCityDto.getDestinyCity());
   }

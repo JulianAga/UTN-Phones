@@ -1,8 +1,10 @@
 package com.utn.phones.exceptions.phoneLinesExceptions;
 
-public class PhoneLineNotExists extends Exception {
+import com.utn.phones.exceptions.generalExceptions.ResourceNotFoundException;
+
+public class PhoneLineNotExists extends ResourceNotFoundException {
 
   public String getMessage() {
-    return "the phone line doesn't exists.";
+    return " the phone line doesn't exists.";
   }
 }

@@ -1,9 +1,10 @@
 package com.utn.phones.controllers.web;
 
 import com.utn.phones.dto.ErrorResponseDto;
-import com.utn.phones.exceptions.billExceptions.InvalidDateException;
+import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
 import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
+import com.utn.phones.exceptions.generalExceptions.ResourceAlreadyExistException;
 import com.utn.phones.exceptions.loginExceptions.InvalidLoginException;
 import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
 import com.utn.phones.exceptions.loginExceptions.ValidationException;
@@ -66,6 +67,11 @@ public class AdviceController extends ResponseEntityExceptionHandler {
     return new ErrorResponseDto(8, exception.getMessage());
   }
 
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(ResourceAlreadyExistException.class)
+  public ErrorResponseDto handlePhoneLineNotExists(ResourceAlreadyExistException exception) {
+    return new ErrorResponseDto(9, exception.getMessage());
+  }
 
 
 

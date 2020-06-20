@@ -1,9 +1,11 @@
 package com.utn.phones.exceptions.cityExceptions;
 
-public class CityNotFoundException extends Exception {
+import com.utn.phones.exceptions.generalExceptions.ResourceNotFoundException;
+
+public class CityNotFoundException extends ResourceNotFoundException {
 
   public String getMessage() {
-    return "City not found";
+    return super.getMessage() + " invalid city id";
   }
 
 }

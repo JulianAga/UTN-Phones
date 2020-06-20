@@ -2,13 +2,14 @@ package com.utn.phones.controllers;
 
 import com.utn.phones.dto.BetweenDatesDto;
 import com.utn.phones.dto.CallRequestDto;
+import com.utn.phones.dto.MostCalledDto;
+import com.utn.phones.exceptions.callExceptions.CallNotFoundException;
+import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.model.Call;
-import com.utn.phones.projections.MostCalled;
 import com.utn.phones.services.CallService;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,16 +26,17 @@ public class CallController {
     this.callService = callService;
   }
 
-  public List<MostCalled> findMostCalledCities(@PathVariable Integer id) {
+  public List<MostCalledDto> findMostCalledCities(@PathVariable Integer id)
+      throws CallNotFoundException {
     return callService.findMostCalledCities(id);
   }
 
   public List<Call> findBetweenDates(BetweenDatesDto callBetweenDatesDto,
-      Integer id) {
+      Integer id) throws InvalidDateException {
     return this.callService.findBetweenDates(id, callBetweenDatesDto);
   }
 
-  public List<Call> findCallsFromClient(@PathVariable Integer id) {
+  public List<Call> findCallsFromClient(@PathVariable Integer id) throws CallNotFoundException {
     return this.callService.findCallsFromClient(id);
   }
 
