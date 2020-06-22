@@ -10,6 +10,8 @@ import com.utn.phones.services.PhoneLineService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
 import org.springframework.test.context.jdbc.Sql;
 
 
@@ -24,6 +26,7 @@ import static org.mockito.Mockito.*;
 public class PhoneLineServiceTest {
 
   private PhoneLineService phoneLineService;
+
   private PhoneLineRepository phoneLineRepository;
 
   @Before

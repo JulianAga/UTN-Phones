@@ -30,13 +30,11 @@ import org.mockito.Mock;
 public class TariffServiceTest {
 
     TariffService tariffService;
-
-    @Mock
     TariffRepository tariffRepository;
 
     @Before
     public void setUp() {
-        initMocks(this);
+        tariffRepository = mock(TariffRepository.class);
         tariffService = new TariffService(tariffRepository);
     }
 
