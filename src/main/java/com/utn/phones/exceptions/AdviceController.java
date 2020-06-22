@@ -1,4 +1,4 @@
-package com.utn.phones.controllers.web;
+package com.utn.phones.exceptions;
 
 import com.utn.phones.dto.ErrorResponseDto;
 import com.utn.phones.exceptions.dateExceptions.InvalidDateException;

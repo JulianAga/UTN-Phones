@@ -26,8 +26,8 @@ public class PhoneLineController {
     return this.phoneLineService.findAll();
   }
 
-  public URI save(PhoneLine phoneLine,City city) throws PhoneLineAlreadyExists {
-    return getLocation(phoneLineService.save(phoneLine,city));
+  public PhoneLine save(PhoneLine phoneLine,City city) throws PhoneLineAlreadyExists {
+    return phoneLineService.save(phoneLine,city);
   }
 
   public void deleteById(Integer id) throws PhoneLineNotExists {
@@ -39,11 +39,4 @@ public class PhoneLineController {
     return this.phoneLineService.update(phoneLineDto, city, id);
   }
 
-  private URI getLocation(PhoneLine phoneLine) {
-    return ServletUriComponentsBuilder
-        .fromCurrentRequest()
-        .path("/{id}")
-        .buildAndExpand(phoneLine.getId())
-        .toUri();
-  }
 }
