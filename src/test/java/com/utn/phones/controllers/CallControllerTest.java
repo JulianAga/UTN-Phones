@@ -1,12 +1,5 @@
 package com.utn.phones.controllers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
 import com.utn.phones.dto.BetweenDatesDto;
 import com.utn.phones.dto.CallRequestDto;
 import com.utn.phones.dto.MostCalledDto;
@@ -15,16 +8,20 @@ import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.model.Call;
 import com.utn.phones.services.CallService;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class CallControllerTest {
 
@@ -107,7 +104,7 @@ public class CallControllerTest {
   }
 
   @Test
-  public void saveTest() {
+  public void saveTest(){
     Call testCall = new Call(1, 12, null, null, null, null, null, null, null,
         null, null, null);
     CallRequestDto callRequestDto = new CallRequestDto("", "", 12, LocalDate.now());
