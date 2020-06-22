@@ -8,6 +8,8 @@ import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.model.Call;
 import com.utn.phones.repositories.CallRepository;
+
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,11 +56,10 @@ public class CallService {
    * @param callRequestDto Dto with four parameters destiny number, origin number, duration, and date
    */
   public Call saveDto(CallRequestDto callRequestDto) {
-    Call call = Call.builder().originNumber(callRequestDto.getOriginNumber())
-        .destinyNumber(callRequestDto.getDestinyNumber()).duration(callRequestDto.getDuration())
-        .date(callRequestDto.getDate())
-        .build();
-    return callRepository.save(call);
+    Call call = Call.builder().bill(null).costPrice(null).date(callRequestDto.getDate())
+          .destinyCity(null).destinyLine(null).destinyNumber(callRequestDto.getDestinyNumber()).duration(callRequestDto.getDuration())
+        .originCity(null).originLine(null).originNumber(callRequestDto.getOriginNumber()).totalPrice(null).build();
+    return this.callRepository.save(call);
   }
 
 }

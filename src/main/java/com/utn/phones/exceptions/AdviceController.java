@@ -10,11 +10,14 @@ import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
 import com.utn.phones.exceptions.loginExceptions.ValidationException;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineAlreadyExists;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineNotExists;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.sql.SQLException;
 
 @RestControllerAdvice
 public class AdviceController extends ResponseEntityExceptionHandler {
@@ -73,6 +76,11 @@ public class AdviceController extends ResponseEntityExceptionHandler {
     return new ErrorResponseDto(9, exception.getMessage());
   }
 
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ExceptionHandler(SQLException.class)
+  public ErrorResponseDto handleDatabaseExceptions (SQLException exception){
+    return new ErrorResponseDto(10, exception.getMessage());
+  }
 
 
 
