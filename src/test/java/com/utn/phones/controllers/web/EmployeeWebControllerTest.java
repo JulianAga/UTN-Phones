@@ -2,6 +2,7 @@ package com.utn.phones.controllers.web;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -22,6 +23,7 @@ import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
 import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.exceptions.generalExceptions.ResourceAlreadyExistException;
+import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineAlreadyExists;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineNotExists;
 import com.utn.phones.model.Bill;
 import com.utn.phones.model.Call;
@@ -230,4 +232,96 @@ public class EmployeeWebControllerTest {
     verify(callController, times(2)).findCallsFromClient(1);
   }
 
+  @Test(expected = CityNotFoundException.class)
+  public void getByOriginDestinyNameCityNotFound() throws CityNotFoundException {
+    when(tariffController.findAll(OriginCityAndDestinyCityDto.builder().build()))
+        .thenThrow(new CityNotFoundException());
+    tariffController.findAll(OriginCityAndDestinyCityDto.builder().build());
+  }
+
+  @Test(expected = InvalidDateException.class)
+  public void getBillsByUserInvalidDate() throws InvalidDateException {
+    when(billController.findBetweenDates(1, BetweenDatesDto.builder().build()))
+        .thenThrow(new InvalidDateException());
+    employeeWebController.getBillsByUser("111", 1, BetweenDatesDto.builder().build());
+  }
+
+  @Test(expected = ClientNotFoundException.class)
+  public void getCallsByUserNotFound() throws ClientNotFoundException {
+    when(callController.findCallsFromClient(1)).thenThrow(new ClientNotFoundException());
+    employeeWebController.getCallsByUser("111", 1);
+  }
+
+  @Test(expected = PhoneLineAlreadyExists.class)
+  public void addPhoneLineAlreadyExists() throws PhoneLineAlreadyExists {
+    when(phoneLineController.save(PhoneLine.builder().build(), City.builder().build()))
+        .thenThrow(new PhoneLineAlreadyExists());
+    employeeWebController.addPhoneLine("111", PhoneLine.builder().build(), City.builder().build());
+  }
+
+  @Test(expected = PhoneLineNotExists.class)
+  public void deletePhoneLineNotExists() throws PhoneLineNotExists {
+    doThrow(new PhoneLineNotExists()).when(phoneLineController).deleteById(1);
+    employeeWebController.deletePhoneLine("111", 1);
+  }
+
+  @Test(expected = PhoneLineNotExists.class)
+  public void updatePhoneLineNotExists() throws PhoneLineNotExists {
+    City city = new City();
+    PhoneLineDto phoneLineDto = new PhoneLineDto();
+    when(phoneLineController.update(phoneLineDto, city, 0)).thenThrow(new PhoneLineNotExists());
+    employeeWebController.updatePhoneLine("111", phoneLineDto, city, 0);
+  }
+
+  @Test(expected = CityNotFoundException.class)
+  public void addClientCityNotFound() throws ResourceAlreadyExistException, CityNotFoundException {
+    when(clientController.save(UserRequestDto.builder().build()))
+        .thenThrow(new CityNotFoundException());
+    employeeWebController.addClient("aaa", UserRequestDto.builder().build());
+  }
+
+  @Test(expected = ResourceAlreadyExistException.class)
+  public void addClientResourceAlreadyExists()
+      throws ResourceAlreadyExistException, CityNotFoundException {
+    when(clientController.save(UserRequestDto.builder().build()))
+        .thenThrow(new ResourceAlreadyExistException());
+    employeeWebController.addClient("aaa", UserRequestDto.builder().build());
+  }
+
+  @Test(expected = ClientNotFoundException.class)
+  public void deleteClientNotFound() throws ClientNotFoundException {
+    doThrow(new ClientNotFoundException()).when(clientController).deleteById(1);
+    employeeWebController.deleteClient("111", 1);
+  }
+
+  @Test(expected = ClientNotFoundException.class)
+  public void updateClientNotFound()
+      throws ClientNotFoundException, ResourceAlreadyExistException, CityNotFoundException {
+    when(clientController.update(1, UserRequestDto.builder().build()))
+        .thenThrow(new ClientNotFoundException());
+    employeeWebController.updateClient("aaa", UserRequestDto.builder().build(), 1);
+  }
+
+  @Test(expected = ResourceAlreadyExistException.class)
+  public void updateClientAlreadyExist()
+      throws ClientNotFoundException, ResourceAlreadyExistException, CityNotFoundException {
+    when(clientController.update(1, UserRequestDto.builder().build()))
+        .thenThrow(new ResourceAlreadyExistException());
+    employeeWebController.updateClient("aaa", UserRequestDto.builder().build(), 1);
+  }
+
+  @Test(expected = CityNotFoundException.class)
+  public void updateClientCityNotFound()
+      throws ClientNotFoundException, ResourceAlreadyExistException, CityNotFoundException {
+    when(clientController.update(1, UserRequestDto.builder().build()))
+        .thenThrow(new CityNotFoundException());
+    employeeWebController.updateClient("aaa", UserRequestDto.builder().build(), 1);
+  }
+
+  @Test(expected = ClientNotFoundException.class)
+  public void findClientNotFound() throws ClientNotFoundException {
+    when(clientController.findById(1))
+        .thenThrow(new ClientNotFoundException());
+    employeeWebController.findClient("aaa", 1);
+  }
 }
