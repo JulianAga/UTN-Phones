@@ -2,6 +2,7 @@ package com.utn.phones.controllers.web;
 
 import com.utn.phones.controllers.CallController;
 import com.utn.phones.dto.CallRequestDto;
+import com.utn.phones.restUtils.RestUtils;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,6 @@ public class AntennaWebController {
   //Agregado de llamadas
   @PostMapping("/call")
   public ResponseEntity<URI> saveCall(CallRequestDto callRequestDto) {
-    return ResponseEntity.created(this.callController.save(callRequestDto)).build();
+    return ResponseEntity.created(RestUtils.getCallLocation(this.callController.save(callRequestDto))).build();
   }
 }

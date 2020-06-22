@@ -4,9 +4,9 @@ import com.utn.phones.dto.BetweenDatesDto;
 import com.utn.phones.dto.CallRequestDto;
 import com.utn.phones.dto.MostCalledDto;
 import com.utn.phones.exceptions.callExceptions.CallNotFoundException;
+import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.model.Call;
-import com.utn.phones.projections.MostCalled;
 import com.utn.phones.repositories.CallRepository;
 import java.util.List;
 import java.util.Optional;
@@ -43,9 +43,10 @@ public class CallService {
     }
   }
 
-  public List<Call> findCallsFromClient(Integer id) throws CallNotFoundException {
+  public List<Call> findCallsFromClient(Integer id)
+      throws ClientNotFoundException {
     return Optional.ofNullable(this.callRepository.findAllByOriginLineClientId(id))
-        .orElseThrow(CallNotFoundException::new);
+        .orElseThrow(ClientNotFoundException::new);
   }
 
   /***

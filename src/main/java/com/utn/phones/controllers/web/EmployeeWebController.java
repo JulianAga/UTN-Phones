@@ -1,6 +1,5 @@
 package com.utn.phones.controllers.web;
 
-import com.sun.jndi.toolkit.url.Uri;
 import com.utn.phones.controllers.BillController;
 import com.utn.phones.controllers.CallController;
 import com.utn.phones.controllers.ClientController;
@@ -10,10 +9,9 @@ import com.utn.phones.dto.BetweenDatesDto;
 import com.utn.phones.dto.OriginCityAndDestinyCityDto;
 import com.utn.phones.dto.PhoneLineDto;
 import com.utn.phones.dto.UserRequestDto;
-import com.utn.phones.exceptions.callExceptions.CallNotFoundException;
-import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
 import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
+import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.exceptions.generalExceptions.ResourceAlreadyExistException;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineAlreadyExists;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineNotExists;
@@ -23,6 +21,7 @@ import com.utn.phones.model.City;
 import com.utn.phones.model.Client;
 import com.utn.phones.model.PhoneLine;
 import com.utn.phones.model.Tariff;
+import com.utn.phones.restUtils.RestUtils;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,8 +64,9 @@ public class EmployeeWebController {
   @GetMapping("/tariff")
   public ResponseEntity<List<Tariff>> getByOriginAndDestinyCityName(@RequestBody
       OriginCityAndDestinyCityDto citiesDto) throws CityNotFoundException {
-    return (this.tariffController.findAll(citiesDto).isEmpty()) ? ResponseEntity.noContent().build() :
-        ResponseEntity.ok(this.tariffController.findAll(citiesDto));
+    return (this.tariffController.findAll(citiesDto).isEmpty()) ? ResponseEntity.noContent().build()
+        :
+            ResponseEntity.ok(this.tariffController.findAll(citiesDto));
   }
 
   //Consulta de facturación
@@ -81,7 +81,7 @@ public class EmployeeWebController {
   //Consulta de llamadas por usuario
   @GetMapping("/call/{id}")
   public ResponseEntity<List<Call>> getCallsByUser(@PathVariable Integer id)
-      throws CallNotFoundException {
+      throws ClientNotFoundException {
     return (this.callController.findCallsFromClient(id).isEmpty()) ? ResponseEntity.noContent()
         .build()
         : ResponseEntity.ok(this.callController.findCallsFromClient(id));
@@ -117,7 +117,7 @@ public class EmployeeWebController {
   @PostMapping("/client")
   public ResponseEntity<?> addClient(@RequestBody UserRequestDto client)
       throws CityNotFoundException, ResourceAlreadyExistException {
-    URI uri = this.clientController.save(client);
+    URI uri = RestUtils.getClientLocation(this.clientController.save(client));
     return ResponseEntity.created(uri).body(uri.toString());
   }
 

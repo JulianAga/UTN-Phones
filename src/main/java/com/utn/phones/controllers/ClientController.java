@@ -5,6 +5,7 @@ import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
 import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.generalExceptions.ResourceAlreadyExistException;
 import com.utn.phones.model.Client;
+import com.utn.phones.restUtils.RestUtils;
 import com.utn.phones.services.ClientService;
 import java.net.URI;
 import java.util.List;
@@ -25,16 +26,16 @@ public class ClientController {
     this.clientService = clientService;
   }
 
-  public URI save(@RequestBody UserRequestDto client)
+  public Client save(@RequestBody UserRequestDto client)
       throws CityNotFoundException, ResourceAlreadyExistException {
-    return getLocation(this.clientService.saveDto(client));
+    return this.clientService.saveDto(client);
   }
 
   public List<Client> findAll() {
     return this.clientService.findAll();
   }
 
-  public Client findById(@PathVariable Integer id) throws Exception {
+  public Client findById(@PathVariable Integer id) throws ClientNotFoundException {
     return this.clientService.findById(id);
   }
 
@@ -45,14 +46,6 @@ public class ClientController {
 
   public void deleteById(Integer id) throws ClientNotFoundException {
     this.clientService.deleteById(id);
-  }
-
-  private URI getLocation(Client client) {
-    return ServletUriComponentsBuilder
-        .fromCurrentRequest()
-        .path("/{id}")
-        .buildAndExpand(client.getId())
-        .toUri();
   }
 
 }
