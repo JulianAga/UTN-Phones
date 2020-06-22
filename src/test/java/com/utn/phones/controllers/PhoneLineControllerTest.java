@@ -1,6 +1,8 @@
 package com.utn.phones.controllers;
 
+import com.utn.phones.dto.OriginCityAndDestinyCityDto;
 import com.utn.phones.dto.PhoneLineDto;
+import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineAlreadyExists;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineNotExists;
 import com.utn.phones.model.*;
@@ -58,6 +60,17 @@ public class PhoneLineControllerTest {
         Assert.assertEquals(phoneLineTest.getId(), phoneLineController.save(testPhoneLine, testCity).getId());
     }
 
+
+    @Test(expected = PhoneLineAlreadyExists.class)
+    public void testSaveWithException() throws PhoneLineAlreadyExists {
+        PhoneLine testPhoneLine = new PhoneLine(1, "123", new LineType(), new Client(), false, true);
+        City testCity= new City();
+
+        when(phoneLineService.save(testPhoneLine, testCity)).thenThrow(new PhoneLineAlreadyExists());
+        phoneLineController.save(testPhoneLine, testCity);
+    }
+
+
     @Test
     public void updateTest()
             throws PhoneLineNotExists {
@@ -74,12 +87,20 @@ public class PhoneLineControllerTest {
         verify(phoneLineService, times(1)).update(phoneLineDtoTest, testCity, 1);
     }
 
+    @Test(expected = PhoneLineNotExists.class)
+    public void testUpdateWithException() throws PhoneLineNotExists {
+        PhoneLineDto phoneLineDtoTest= new PhoneLineDto(false, "123");
+        City testCity= new City();
+
+        when(phoneLineService.update(phoneLineDtoTest, testCity, 1)).thenThrow(new PhoneLineNotExists());
+        phoneLineController.update(phoneLineDtoTest, testCity, 1);
+    }
+
     @Test
     public void deleteByIdTest() throws PhoneLineNotExists {
         doNothing().when(phoneLineService).deleteById(1);
         phoneLineController.deleteById(1);
         verify(phoneLineService, times(1)).deleteById(1);
     }
-
 
 }
