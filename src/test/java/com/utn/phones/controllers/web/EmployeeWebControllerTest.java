@@ -139,14 +139,16 @@ public class EmployeeWebControllerTest {
 
   //*** Line management ***//
   @Test
-  public void AddPhoneLineTest() throws ResourceAlreadyExistException {
-    PhoneLine phoneLine = PhoneLine.builder().id(1).number("123").client(null).build();
-    City city = City.builder().id(1).name("chascomus").build();
+  public void AddPhoneLineTest()
+      throws ResourceAlreadyExistException, ClientNotFoundException {
+    PhoneLineDto phoneLine = PhoneLineDto.builder().number("123").build();
 
-    when(phoneLineController.save(phoneLine, city)).thenReturn(phoneLine);
-    when(RestUtils.getPhoneLineLocation(phoneLine)).thenReturn(URI.create("page/1"));
+    PhoneLine phoneLineReturn = PhoneLine.builder().id(1).number("123").build();
 
-    ResponseEntity<?> returnedUri = employeeWebController.addPhoneLine("1", phoneLine, city);
+    when(phoneLineController.save(phoneLine, 1)).thenReturn(phoneLineReturn);
+    when(RestUtils.getPhoneLineLocation(phoneLineReturn)).thenReturn(URI.create("page/1"));
+
+    ResponseEntity<?> returnedUri = employeeWebController.addPhoneLine("1", phoneLine, 1);
     List<String> headers = returnedUri.getHeaders().get("location");
     assert headers != null;
     Assert.assertEquals(headers.get(0), "page/1");
@@ -154,18 +156,18 @@ public class EmployeeWebControllerTest {
 
   @Test
   public void updatePhoneLineTest() throws PhoneLineNotExists {
-    PhoneLineDto phoneRequestDto = new PhoneLineDto(true, "123");
+    PhoneLineDto phoneRequestDto = PhoneLineDto.builder().number("0303456").build();
     City city = City.builder().id(1).name("chascomus").build();
     PhoneLine phoneLineTest = PhoneLine.builder().id(1).number("0303456").build();
 
-    when(phoneLineController.update(phoneRequestDto, city, 1)).thenReturn(phoneLineTest);
+    when(phoneLineController.update(phoneRequestDto, 1)).thenReturn(phoneLineTest);
 
     ResponseEntity<PhoneLine> phoneLine = employeeWebController
-        .updatePhoneLine("111", phoneRequestDto, city, 1);
+        .updatePhoneLine("111", phoneRequestDto, 1);
     assertEquals(phoneLine.getBody().getId(), phoneLineTest.getId());
     assertEquals(phoneLine.getBody().getNumber().length(), phoneLineTest.getNumber().length());
 
-    verify(phoneLineController, times(1)).update(phoneRequestDto, city, 1);
+    verify(phoneLineController, times(1)).update(phoneRequestDto, 1);
   }
 
   @Test
@@ -253,10 +255,10 @@ public class EmployeeWebControllerTest {
   }
 
   @Test(expected = PhoneLineAlreadyExists.class)
-  public void addPhoneLineAlreadyExists() throws PhoneLineAlreadyExists {
-    when(phoneLineController.save(PhoneLine.builder().build(), City.builder().build()))
+  public void addPhoneLineAlreadyExists() throws PhoneLineAlreadyExists, ClientNotFoundException {
+    when(phoneLineController.save(PhoneLineDto.builder().build(), 1))
         .thenThrow(new PhoneLineAlreadyExists());
-    employeeWebController.addPhoneLine("111", PhoneLine.builder().build(), City.builder().build());
+    employeeWebController.addPhoneLine("111", PhoneLineDto.builder().build(), 1);
   }
 
   @Test(expected = PhoneLineNotExists.class)
@@ -267,10 +269,9 @@ public class EmployeeWebControllerTest {
 
   @Test(expected = PhoneLineNotExists.class)
   public void updatePhoneLineNotExists() throws PhoneLineNotExists {
-    City city = new City();
     PhoneLineDto phoneLineDto = new PhoneLineDto();
-    when(phoneLineController.update(phoneLineDto, city, 0)).thenThrow(new PhoneLineNotExists());
-    employeeWebController.updatePhoneLine("111", phoneLineDto, city, 0);
+    when(phoneLineController.update(phoneLineDto, 0)).thenThrow(new PhoneLineNotExists());
+    employeeWebController.updatePhoneLine("111", phoneLineDto, 0);
   }
 
   @Test(expected = CityNotFoundException.class)

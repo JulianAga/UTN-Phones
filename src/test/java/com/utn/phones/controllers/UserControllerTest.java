@@ -13,6 +13,7 @@ import com.utn.phones.model.Employee;
 import com.utn.phones.model.User;
 import com.utn.phones.model.UserType;
 import com.utn.phones.services.UserService;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,7 +51,8 @@ public class UserControllerTest {
   }
 
   @Test
-  public void testLoginOk() throws UserNotExistException, ValidationException {
+  public void testLoginOk()
+      throws UserNotExistException, ValidationException, NoSuchAlgorithmException {
     User loggedUser = new User(1, "", "user", "pwd", "sad", "sad", new City(), new UserType(),
         true);
     //Cuando llame al mock service.login devuelvo el logged user
@@ -64,13 +66,15 @@ public class UserControllerTest {
   }
 
   @Test(expected = UserNotExistException.class)
-  public void testLoginUserNotFound() throws UserNotExistException, ValidationException {
+  public void testLoginUserNotFound()
+      throws UserNotExistException, ValidationException, NoSuchAlgorithmException {
     when(service.login("user", "pwd")).thenThrow(new UserNotExistException());
     userController.login("user", "pwd");
   }
 
   @Test(expected = ValidationException.class)
-  public void testLoginInvalidData() throws UserNotExistException, ValidationException {
+  public void testLoginInvalidData()
+      throws UserNotExistException, ValidationException, NoSuchAlgorithmException {
     userController.login(null, "pwd");
   }
 /*

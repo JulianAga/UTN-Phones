@@ -6,6 +6,9 @@ import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.generalExceptions.ResourceAlreadyExistException;
 import com.utn.phones.model.Client;
 import com.utn.phones.repositories.ClientRepository;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +36,7 @@ public class ClientService {
       client.setDNI(clientDto.getDni());
       client.setName(clientDto.getName());
       client.setSurname(clientDto.getSurname());
-      client.setPassword(clientDto.getPassword());
+      client.setPassword(hashPassword(clientDto.getPassword()));
       return this.clientRepository.save(client);
     } catch (Exception e) {
       throw new ResourceAlreadyExistException();
@@ -58,7 +61,7 @@ public class ClientService {
     client.setCity(cityService.findById(userRequestDto.getCity()));
     try {
       client.setSurname(userRequestDto.getSurname());
-      client.setPassword(userRequestDto.getPassword());
+      client.setPassword(hashPassword(userRequestDto.getPassword()));
       client.setName(userRequestDto.getName());
       client.setDNI(userRequestDto.getDni());
       client.setUsername(userRequestDto.getUsername());
@@ -72,5 +75,14 @@ public class ClientService {
     Client client = this.findById(id);
     client.setActive(Boolean.FALSE);
     this.clientRepository.save(client);
+  }
+
+  private String hashPassword(String password) throws NoSuchAlgorithmException {
+    MessageDigest m = MessageDigest.getInstance("MD5");
+    byte[] data = password.getBytes();
+    m.update(data, 0, data.length);
+    BigInteger i = new BigInteger(1, m.digest());
+    System.out.println(String.format("%1$032X", i));
+    return String.format("%1$032X", i);
   }
 }

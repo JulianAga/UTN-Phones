@@ -4,6 +4,7 @@ import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
 import com.utn.phones.exceptions.loginExceptions.ValidationException;
 import com.utn.phones.model.User;
 import com.utn.phones.services.UserService;
+import java.security.NoSuchAlgorithmException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +25,8 @@ public class UserController {
         return this.userService.findAll();
     }
 
-    public User login(String username, String password) throws UserNotExistException, ValidationException {
+    public User login(String username, String password)
+        throws UserNotExistException, ValidationException, NoSuchAlgorithmException {
         if ((username != null) && (password != null)) {
             return userService.login(username, password);
         } else {

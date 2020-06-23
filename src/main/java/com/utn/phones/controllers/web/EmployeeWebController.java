@@ -93,12 +93,13 @@ public class EmployeeWebController {
 
   /* ---------------Alta, baja y suspensión de lineas--------------- */
   //Alta de linea
-  @PostMapping("/phone-line")
+  @PostMapping("/phone-line/{id}")
   public ResponseEntity<?> addPhoneLine(@RequestHeader("Authorization") String token,
-      @RequestBody PhoneLine phoneLine, @RequestBody City city)
-      throws PhoneLineAlreadyExists {
+      @RequestBody PhoneLineDto phoneLineDto,@PathVariable Integer id)
+      throws PhoneLineAlreadyExists, ClientNotFoundException {
     return ResponseEntity
-        .created(RestUtils.getPhoneLineLocation(this.phoneLineController.save(phoneLine, city)))
+        .created(RestUtils.getPhoneLineLocation(this.phoneLineController.
+            save(phoneLineDto,id)))
         .build();
   }
 
@@ -113,10 +114,9 @@ public class EmployeeWebController {
   //Suspensión de linea
   @PutMapping("/phone-line/{id}")
   public ResponseEntity<PhoneLine> updatePhoneLine(@RequestHeader("Authorization") String token,
-      @RequestBody PhoneLineDto phoneLineDto,
-      @RequestBody City city, @PathVariable Integer id)
+      @RequestBody PhoneLineDto phoneLineDto, @PathVariable Integer id)
       throws PhoneLineNotExists {
-    return ResponseEntity.ok(this.phoneLineController.update(phoneLineDto, city, id));
+    return ResponseEntity.ok(this.phoneLineController.update(phoneLineDto, id));
   }
 
 

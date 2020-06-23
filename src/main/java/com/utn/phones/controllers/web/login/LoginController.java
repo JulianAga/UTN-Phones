@@ -7,6 +7,7 @@ import com.utn.phones.exceptions.loginExceptions.InvalidLoginException;
 import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
 import com.utn.phones.exceptions.loginExceptions.ValidationException;
 import com.utn.phones.model.User;
+import java.security.NoSuchAlgorithmException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class LoginController {
 
   @PostMapping("/login")
   public ResponseEntity<String> login(@RequestBody LoginDto loginDto)
-      throws UserNotExistException, ValidationException {
+      throws UserNotExistException, ValidationException, NoSuchAlgorithmException {
     User user = userController.login(loginDto.getUsername(), loginDto.getPassword());
     String token = sessionManager.createSession(user);
     return ResponseEntity.ok(token);

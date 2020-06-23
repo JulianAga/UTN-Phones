@@ -12,12 +12,17 @@ public class PhoneLineServiceTest {
   @Mock
   PhoneLineRepository phoneLineRepository;
 
+  @Mock
+  CityService cityService;
+
+  @Mock
+  ClientService clientService;
+
   @Before
   public void setUp() {
     initMocks(this);
-    phoneLineService = new PhoneLineService(phoneLineRepository);
+    phoneLineService = new PhoneLineService(phoneLineRepository, cityService, clientService);
   }
-
 
 
 }
