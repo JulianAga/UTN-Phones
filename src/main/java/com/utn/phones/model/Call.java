@@ -39,12 +39,10 @@ public class Call {
 
   private Float totalPrice;
 
-  @NotNull
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "id_origin_line")
   private PhoneLine originLine;
 
-  @NotNull
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "id_destiny_line")
   private PhoneLine destinyLine;
@@ -55,17 +53,14 @@ public class Call {
   @Column(name = "destiny_phone_line")
   private String destinyNumber;
 
-  @NotNull
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "origin_city")
   private City originCity;
 
-  @NotNull
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "destiny_city")
   private City destinyCity;
 
-  @NotNull
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "bill")
   private Bill bill;

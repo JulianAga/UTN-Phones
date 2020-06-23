@@ -4,6 +4,7 @@ import com.utn.phones.dto.MostCalledDto;
 import com.utn.phones.model.Call;
 import java.time.LocalDate;
 import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -42,5 +43,6 @@ public interface CallRepository extends JpaRepository<Call, Integer> {
    * @return calls from this client
    */
   List<Call> findAllByOriginLineClientId(Integer userId);
+
 
 }

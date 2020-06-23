@@ -8,11 +8,12 @@ import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.model.Call;
 import com.utn.phones.services.CallService;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/call")
@@ -39,7 +40,7 @@ public class CallController {
     return this.callService.findCallsFromClient(id);
   }
 
-  public Call save(CallRequestDto callRequestDto) {
+  public Call save(CallRequestDto callRequestDto){
     return this.callService.saveDto(callRequestDto);
   }
 
