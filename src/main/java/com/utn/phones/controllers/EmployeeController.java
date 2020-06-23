@@ -23,11 +23,6 @@ public class EmployeeController {
     this.employeeService = employeeService;
   }
 
-  @PostMapping("/")
-  public Employee save(@RequestBody UserRequestDto client) throws CityNotFoundException {
-    return this.employeeService.save(client);
-  }
-
   @GetMapping("/")
   public List<Employee> findAll() {
     return this.employeeService.findAll();

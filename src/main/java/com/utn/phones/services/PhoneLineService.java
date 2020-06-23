@@ -53,4 +53,5 @@ public class PhoneLineService {
     phoneLine.setSuspended(phoneLineDto.getSuspended());
     return this.phoneLineRepository.save(phoneLine);
   }
+
 }

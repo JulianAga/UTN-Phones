@@ -1,7 +1,7 @@
 package com.utn.phones.services;
 
 import com.utn.phones.dto.BetweenDatesDto;
-import com.utn.phones.exceptions.billExceptions.InvalidDateException;
+import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.model.Bill;
 import com.utn.phones.repositories.BillRepository;
 import java.util.List;

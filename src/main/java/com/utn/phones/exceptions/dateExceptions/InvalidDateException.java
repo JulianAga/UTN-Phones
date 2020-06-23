@@ -1,4 +1,4 @@
-package com.utn.phones.exceptions.billExceptions;
+package com.utn.phones.exceptions.dateExceptions;
 
 public class InvalidDateException extends Exception {
 

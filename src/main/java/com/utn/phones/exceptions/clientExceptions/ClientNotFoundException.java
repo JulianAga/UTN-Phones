@@ -1,13 +1,13 @@
 package com.utn.phones.exceptions.clientExceptions;
 
+import com.utn.phones.exceptions.generalExceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class ClientNotFoundException extends Exception {
+public class ClientNotFoundException extends ResourceNotFoundException {
 
   @Override
   public String getMessage() {
-    return "client doesn't exist";
+    return super.getMessage() + " invalid client id not found";
   }
 }

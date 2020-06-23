@@ -2,14 +2,17 @@ package com.utn.phones.services;
 
 import com.utn.phones.dto.BetweenDatesDto;
 import com.utn.phones.dto.CallRequestDto;
+import com.utn.phones.dto.MostCalledDto;
+import com.utn.phones.exceptions.callExceptions.CallNotFoundException;
+import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
+import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.model.Call;
-import com.utn.phones.projections.MostCalled;
 import com.utn.phones.repositories.CallRepository;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CallService {
@@ -25,14 +28,15 @@ public class CallService {
     return callRepository.findAll();
   }
 
-  public List<MostCalled> findMostCalledCities(Integer id) {
-    return callRepository.findMostCalledCities(id);
+  public List<MostCalledDto> findMostCalledCities(Integer id) throws CallNotFoundException {
+    return Optional.ofNullable(callRepository.findMostCalledCities(id))
+        .orElseThrow(CallNotFoundException::new);
   }
 
-  public List<Call> findBetweenDates(Integer userId, BetweenDatesDto callBetweenDatesDto) {
+  public List<Call> findBetweenDates(Integer userId, BetweenDatesDto callBetweenDatesDto)
+      throws InvalidDateException {
     if (callBetweenDatesDto.getEnd().isBefore(callBetweenDatesDto.getStart())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "The start date must be before the end date");
+      throw new InvalidDateException();
     } else {
       return callRepository
           .findAllByOriginLineClientIdAndDateBetween(userId, callBetweenDatesDto.getStart(),
@@ -40,19 +44,20 @@ public class CallService {
     }
   }
 
-  public List<Call> findCallsFromClient(Integer id) {
-    return this.callRepository.findAllByOriginLineClientId(id);
+  public List<Call> findCallsFromClient(Integer id)
+      throws ClientNotFoundException {
+    return Optional.ofNullable(this.callRepository.findAllByOriginLineClientId(id))
+        .orElseThrow(ClientNotFoundException::new);
   }
 
   /***
    * Agregado de llamadas
    * @param callRequestDto Dto with four parameters destiny number, origin number, duration, and date
    */
-  public Call saveDto(CallRequestDto callRequestDto) {
-    Call call = Call.builder().originNumber(callRequestDto.getOriginNumber())
-        .destinyNumber(callRequestDto.getDestinyNumber()).duration(callRequestDto.getDuration())
-        .date(callRequestDto.getDate())
-        .build();
+  public Call saveDto(CallRequestDto callRequestDto){
+    Call call = Call.builder().bill(null).costPrice(null).date(callRequestDto.getDate())
+          .destinyCity(null).destinyLine(null).destinyNumber(callRequestDto.getDestinyNumber()).duration(callRequestDto.getDuration())
+        .originCity(null).originLine(null).originNumber(callRequestDto.getOriginNumber()).totalPrice(null).build();
     return callRepository.save(call);
   }
 

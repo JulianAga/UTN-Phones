@@ -3,6 +3,7 @@ package com.utn.phones.services;
 import com.utn.phones.dto.UserRequestDto;
 import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
 import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
+import com.utn.phones.exceptions.generalExceptions.ResourceAlreadyExistException;
 import com.utn.phones.model.Client;
 import com.utn.phones.repositories.ClientRepository;
 import java.util.List;
@@ -22,15 +23,22 @@ public class ClientService {
     this.cityService = cityService;
   }
 
-  public Client saveDto(UserRequestDto clientDto) throws CityNotFoundException {
+  public Client saveDto(UserRequestDto clientDto)
+      throws ResourceAlreadyExistException, CityNotFoundException {
     Client client = new Client();
+
     client.setCity(cityService.findById(clientDto.getCity()));
-    client.setUsername(clientDto.getUsername());
-    client.setDNI(clientDto.getDni());
-    client.setName(clientDto.getName());
-    client.setSurname(clientDto.getSurname());
-    client.setPassword(clientDto.getPassword());
-    return this.clientRepository.save(client);
+    try {
+      client.setUsername(clientDto.getUsername());
+      client.setDNI(clientDto.getDni());
+      client.setName(clientDto.getName());
+      client.setSurname(clientDto.getSurname());
+      client.setPassword(clientDto.getPassword());
+      return this.clientRepository.save(client);
+    } catch (Exception e) {
+      throw new ResourceAlreadyExistException();
+    }
+
   }
 
   public List<Client> findAll() {
@@ -45,15 +53,19 @@ public class ClientService {
   }
 
   public Client update(Integer id, UserRequestDto userRequestDto)
-      throws ClientNotFoundException, CityNotFoundException {
+      throws ResourceAlreadyExistException, CityNotFoundException, ClientNotFoundException {
     Client client = this.findById(id);
-    client.setSurname(userRequestDto.getSurname());
-    client.setPassword(userRequestDto.getPassword());
-    client.setName(userRequestDto.getName());
-    client.setDNI(userRequestDto.getDni());
     client.setCity(cityService.findById(userRequestDto.getCity()));
-    client.setUsername(userRequestDto.getUsername());
-    return this.clientRepository.save(client);
+    try {
+      client.setSurname(userRequestDto.getSurname());
+      client.setPassword(userRequestDto.getPassword());
+      client.setName(userRequestDto.getName());
+      client.setDNI(userRequestDto.getDni());
+      client.setUsername(userRequestDto.getUsername());
+      return this.clientRepository.save(client);
+    } catch (Exception e) {
+      throw new ResourceAlreadyExistException();
+    }
   }
 
   public void deleteById(Integer id) throws ClientNotFoundException {
