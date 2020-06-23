@@ -33,4 +33,14 @@ public class IntegrationComponent {
         return response.getBody();
     }
 
+    //Deberia haber un token para apis, no el de login
+    /*HttpHeaders headers = new HttpHeaders();
+headers.setContentType(MediaType.APPLICATION_JSON);
+headers.set("Authorization", "Bearer "+accessToken);
+
+HttpEntity<String> entity = new HttpEntity<String>(requestJson,headers);
+String result = restTemplate.postForObject(url, entity, String.class); */
+
+    // igual lo voy a sacar de usercontroller y listo, sin autorizacion, sin requestbody, etc
+
 }
