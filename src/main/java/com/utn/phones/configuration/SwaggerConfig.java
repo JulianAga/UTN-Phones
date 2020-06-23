@@ -16,7 +16,7 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.utn.phones.controllers.web"))
+                .apis(RequestHandlerSelectors.basePackage("com.utn"))
                 .paths(PathSelectors.any())
                 .build();
     }

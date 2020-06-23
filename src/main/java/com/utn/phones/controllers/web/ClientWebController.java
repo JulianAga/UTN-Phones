@@ -11,14 +11,14 @@ import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
 import com.utn.phones.model.Bill;
 import com.utn.phones.model.Call;
-import java.util.List;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -38,6 +38,13 @@ public class ClientWebController {
   }
 
   //Consulta de destinos mas llamados por el usuario
+  @ApiOperation(value = "Consult of the most called destiny by the logged user", code = 200)
+  @ApiResponses(value = {
+          @ApiResponse(code = 200, message = "Ok"),
+          @ApiResponse(code = 401, message = "Unauthorized"),
+          @ApiResponse(code = 204, message = "User does not exist"),
+          @ApiResponse(code = 204, message = "There are no calls")
+  })
   @GetMapping("/top")
   public ResponseEntity<List<MostCalledDto>> findCallFromClient(
       @RequestHeader("Authorization") String token)
