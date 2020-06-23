@@ -97,6 +97,21 @@
   <build>
     <plugins>
       <plugin>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-maven-plugin</artifactId>
+      <configuration>
+        <fork>true</fork>
+        <mainClass>com.utn.phones.PhonesApplication</mainClass>
+      </configuration>
+      <executions>
+        <execution>
+          <goals>
+            <goal>repackage</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
@@ -116,6 +131,17 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.2</version>
+        <configuration>
+          <excludes>
+            <exclude>**/model/**</exclude>
+            <exclude>**/Sessions/**</exclude>
+            <exclude>**/restUtils/**</exclude>
+            <exclude>**/projections/**</exclude>
+            <exclude>**/dto/**</exclude>
+            <exclude>**/configuration/**</exclude>
+            <exclude>**/repositories/**</exclude>
+          </excludes>
+        </configuration>
         <executions>
           <execution>
             <goals>
@@ -162,6 +188,8 @@
           </execution>
         </executions>
       </plugin>
+
+
     </plugins>
   </build>
 
