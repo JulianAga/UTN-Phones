@@ -11,6 +11,7 @@ import com.utn.phones.model.City;
 import com.utn.phones.model.User;
 import com.utn.phones.model.UserType;
 import com.utn.phones.repositories.UserRepository;
+import java.security.NoSuchAlgorithmException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -31,7 +32,7 @@ public class UserServiceTest {
   }
 
   @Test
-  public void testLoginOk() throws UserNotExistException {
+  public void testLoginOk() throws UserNotExistException, NoSuchAlgorithmException {
     User loggedUser = new User(1, "123", "foo", "foo", "foo", "foo", new City(),
         new UserType(), true);
     when(dao.getByUsernameAndPassword("user", "pwd")).thenReturn(loggedUser);
@@ -42,7 +43,7 @@ public class UserServiceTest {
   }
 
   @Test(expected = UserNotExistException.class)
-  public void testLoginUserNotFound() throws UserNotExistException {
+  public void testLoginUserNotFound() throws UserNotExistException, NoSuchAlgorithmException {
     when(dao.getByUsernameAndPassword("user", "pwd")).thenReturn(null);
     service.login("user", "pwd");
   }

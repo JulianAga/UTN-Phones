@@ -29,6 +29,12 @@ public class PhoneLineServiceTest {
 
   private PhoneLineRepository phoneLineRepository;
 
+  @Mock
+  CityService cityService;
+
+  @Mock
+  ClientService clientService;
+
   @Before
   public void setUp() {
     phoneLineRepository= mock(PhoneLineRepository.class);
@@ -107,6 +113,5 @@ public class PhoneLineServiceTest {
     when(phoneLineRepository.save(phoneLineTest)).thenReturn(phoneLineTest);
     when(phoneLineService.update(phoneLineDtoTest, testCity, 1)).thenThrow(PhoneLineNotExists.class);
   }
-
 
 }

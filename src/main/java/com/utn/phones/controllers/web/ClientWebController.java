@@ -41,12 +41,11 @@ public class ClientWebController {
   @GetMapping("/top")
   public ResponseEntity<List<MostCalledDto>> findCallFromClient(
       @RequestHeader("Authorization") String token)
-      throws UserNotExistException, CallNotFoundException {
-    return this.callController
-        .findMostCalledCities(sessionManager.getCurrentUser(token).getId()).isEmpty()
+      throws CallNotFoundException, UserNotExistException {
+    List<MostCalledDto> mostCalledDtoList = callController.findMostCalledCities(sessionManager.getCurrentUser(token).getId());
+    return mostCalledDtoList.isEmpty()
         ? ResponseEntity.noContent().build() :
-        ResponseEntity.ok(this.callController
-            .findMostCalledCities(sessionManager.getCurrentUser(token).getId()));
+        ResponseEntity.ok(mostCalledDtoList);
   }
 
   //Consulta del facturas del usuario logueado por rango de fechas

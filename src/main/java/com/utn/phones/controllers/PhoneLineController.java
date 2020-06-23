@@ -1,6 +1,8 @@
 package com.utn.phones.controllers;
 
 import com.utn.phones.dto.PhoneLineDto;
+import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
+import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineAlreadyExists;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineNotExists;
 import com.utn.phones.model.City;
@@ -26,17 +28,18 @@ public class PhoneLineController {
     return this.phoneLineService.findAll();
   }
 
-  public PhoneLine save(PhoneLine phoneLine,City city) throws PhoneLineAlreadyExists {
-    return phoneLineService.save(phoneLine,city);
+  public PhoneLine save(PhoneLineDto phoneLine, Integer idClient)
+      throws PhoneLineAlreadyExists, ClientNotFoundException {
+    return phoneLineService.save(phoneLine,idClient);
   }
 
   public void deleteById(Integer id) throws PhoneLineNotExists {
     this.phoneLineService.deleteById(id);
   }
 
-  public PhoneLine update(PhoneLineDto phoneLineDto, City city, Integer id)
+  public PhoneLine update(PhoneLineDto phoneLineDto, Integer id)
       throws PhoneLineNotExists {
-    return this.phoneLineService.update(phoneLineDto, city, id);
+    return this.phoneLineService.update(phoneLineDto, id);
   }
 
 }

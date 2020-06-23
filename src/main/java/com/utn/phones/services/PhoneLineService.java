@@ -1,6 +1,8 @@
 package com.utn.phones.services;
 
 import com.utn.phones.dto.PhoneLineDto;
+import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
+import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineAlreadyExists;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineNotExists;
 import com.utn.phones.model.City;
@@ -16,9 +18,16 @@ public class PhoneLineService {
 
   private PhoneLineRepository phoneLineRepository;
 
+  private CityService cityService;
+
+  private ClientService clientService;
+
   @Autowired
-  public PhoneLineService(final PhoneLineRepository phoneLineRepository) {
+  public PhoneLineService(final PhoneLineRepository phoneLineRepository,
+      final CityService cityService, final ClientService clientService) {
     this.phoneLineRepository = phoneLineRepository;
+    this.cityService = cityService;
+    this.clientService = clientService;
   }
 
   public List<PhoneLine> findAll() {
@@ -27,11 +36,19 @@ public class PhoneLineService {
         .collect(Collectors.toList());
   }
 
-  public PhoneLine save(PhoneLine phoneLine, City city) throws PhoneLineAlreadyExists {
-    if (this.phoneLineRepository.findByNumber(phoneLine.getNumber()) != null) {
+  public PhoneLine save(PhoneLineDto phoneLineDto, Integer idClient)
+      throws PhoneLineAlreadyExists, ClientNotFoundException {
+    if (this.phoneLineRepository.findByNumber(phoneLineDto.getNumber()) != null) {
       throw new PhoneLineAlreadyExists();
     }
-    phoneLine.setNumber(city.getPrefix() + phoneLine.getNumber());
+
+    PhoneLine phoneLine = PhoneLine.builder()
+        .number(phoneLineDto.getNumber())
+        .client(clientService.findById(idClient))
+        .lineType(phoneLineDto.getLineType())
+        .suspended(false)
+        .active(true)
+        .build();
     return this.phoneLineRepository.save(phoneLine);
   }
 
@@ -46,10 +63,10 @@ public class PhoneLineService {
     this.phoneLineRepository.save(phoneLine);
   }
 
-  public PhoneLine update(PhoneLineDto phoneLineDto, City city, Integer id)
+  public PhoneLine update(PhoneLineDto phoneLineDto, Integer id)
       throws PhoneLineNotExists {
     PhoneLine phoneLine = this.findById(id);
-    phoneLine.setNumber(city.getPrefix() + phoneLineDto.getNumber());
+    phoneLine.setNumber(phoneLineDto.getNumber());
     phoneLine.setSuspended(phoneLineDto.getSuspended());
     return this.phoneLineRepository.save(phoneLine);
   }
