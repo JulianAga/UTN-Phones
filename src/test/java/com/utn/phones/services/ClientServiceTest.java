@@ -23,12 +23,14 @@ import static org.mockito.Mockito.*;
 public class ClientServiceTest {
 
     ClientService clientService;
+    CityService cityService;
     ClientRepository clientRepository;
 
     @Before
     public void setUp() {
         clientRepository = mock(ClientRepository.class);
-        clientService = new ClientService(clientRepository, null);
+        cityService = mock(CityService.class);
+        clientService = new ClientService(clientRepository, cityService);
     }
 
     @Test
@@ -52,8 +54,11 @@ public class ClientServiceTest {
                 new UserType(), true, null);
         UserRequestDto userRequestDto = new UserRequestDto("123", "foo", "foo", "foo", "foo", 1);
 
-        assertEquals(userRequestDto.getDni(), testClient.getDNI());
+        when(clientRepository.save(testClient)).thenReturn(testClient);
+        when(cityService.findById(userRequestDto.getCity())).thenReturn(new City());
+        Client client = clientService.saveDto(userRequestDto);
 
+        assertEquals(client.getDNI(), testClient.getDNI());
     }
 
     @Test
@@ -75,7 +80,6 @@ public class ClientServiceTest {
         ;
         Client testClient = new Client(1, "123", "foo", "foo", "foo", "foo", new City(),
                 new UserType(), true, null);
-
 
         when(clientRepository.save(testClient)).thenReturn(testClient);
 

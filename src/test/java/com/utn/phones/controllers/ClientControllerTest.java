@@ -13,8 +13,10 @@ import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.generalExceptions.ResourceAlreadyExistException;
 import com.utn.phones.model.City;
 import com.utn.phones.model.Client;
+import com.utn.phones.model.PhoneLine;
 import com.utn.phones.model.UserType;
 import com.utn.phones.services.ClientService;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Assert;
@@ -66,9 +68,10 @@ public class ClientControllerTest {
 
   @Test
   public void findByIdTest() throws ClientNotFoundException {
+    List<PhoneLine> phoneLines = new ArrayList<>();
 
     Client testClient = new Client(1, "123", "foo", "foo", "foo", "foo", new City(),
-        new UserType(), true, null);
+        new UserType(), true, phoneLines);
 
     when(clientService.findById(1)).thenReturn(testClient);
     Client client = clientController.findById(1);
