@@ -1,5 +1,6 @@
 package com.utn.phones.services;
 
+import com.utn.phones.exceptions.NoGarciasLinesFoundException;
 import com.utn.phones.model.PhoneLine;
 import com.utn.phones.repositories.PhoneLineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +26,6 @@ public class PhoneLineService {
         return this.phoneLineRepository.save(phoneLine);
     }
 
-    public List<PhoneLine> getGarciasPhoneLines(){return this.phoneLineRepository.getGarciasPhoneLines(); }
+    public List<PhoneLine> getGarciasPhoneLines() throws NoGarciasLinesFoundException  {
+        return this.phoneLineRepository.getGarciasPhoneLines(); }
 }
