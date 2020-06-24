@@ -361,7 +361,17 @@ $$
 
 INSERT INTO provinces (name) VALUES ("Buenos Aires"), ("Catamarca"), ("Chaco"), ("Chubut"), ("Córdoba"), ("Corrientes"), ("Entre Ríos"), ("Formosa"), ("Jujuy"), ("La Pampa"), ("La Rioja"), ("Mendoza"), ("Misiones"), ("Neuquén"), ("Rio Negro"), ("Salta"), ("San Juan"), ("San Luis"), ("Santa Cruz"), ("Santa Fé"), ("Santiago del Estero"), ("Tierra del Fuego"), ("Tucumán");
 INSERT INTO line_types (type) VALUES ("home"), ("mobile");
-INSERT INTO user_types (type) VALUES ("client"), ("employee");
+INSERT INTO user_types (type) VALUES ("client"), ("employee"), ("antenna");
+INSERT INTO cities (prefix, name, province) VALUES (11, "Buenos Aires", 1), (351, "Córdoba", 5), (379, "Corrientes", 6), (370, "Formosa", 8),
+(221, "La Plata", 1), (380, "La Rioja", 11), (261, "Mendoza", 12), (299, "Neuquén", 14), (343, "Paraná", 7), (376, "Posadas", 13), (280, "Rawson", 4),
+(362, "Resistencia", 3), (2966, "Río Gallegos", 19), (387, "Salta", 16), (383, "Catamarca", 2), (264, "San Juan", 17), (266, "San Luis", 18),
+(381, "San Miguel de Tucumán", 23), (388, "San Salvador de Jujuy", 9), (342, "Santa Fé", 20), (2954, "Santa Rosa", 10), (385, "Santiago del Estero", 21),
+(2920, "Viedma", 15), (2901, "Ushuaia", 22), (223, "Mar del Plata", 1);
+INSERT INTO users (dni, username, password, name, surname, city, user_type) VALUES ("41715326", "florchiexco", "123", "Florencia", "Excoffon", "25", 1),
+("41123456", "jaga", "123", "Julian", "Aga", 16, 1), ("45678932", "anita_e", "123", "Anita", "Excoffon", 16, 3);
+INSERT INTO phone_lines (number, line_type , user_id ) VALUES ("2235426942", 1, 1), ("264789251", 1, 2), ("266878941", 1, 1);
+INSERT INTO calls (duration, date, origin_phone_line , destiny_phone_line ) VALUES (50, "2020-06-11", "2235426942", "266878941");
+
 
 /* Users */
 
