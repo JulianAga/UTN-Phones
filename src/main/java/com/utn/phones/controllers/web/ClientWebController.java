@@ -5,7 +5,7 @@ import com.utn.phones.controllers.BillController;
 import com.utn.phones.controllers.CallController;
 import com.utn.phones.controllers.ClientController;
 import com.utn.phones.dto.BetweenDatesDto;
-import com.utn.phones.dto.MostCalledDto;
+import com.utn.phones.projections.MostCalled;
 import com.utn.phones.exceptions.callExceptions.CallNotFoundException;
 import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
@@ -39,10 +39,10 @@ public class ClientWebController {
 
   //Consulta de destinos mas llamados por el usuario
   @GetMapping("/top")
-  public ResponseEntity<List<MostCalledDto>> findCallFromClient(
+  public ResponseEntity<List<MostCalled>> findCallFromClient(
       @RequestHeader("Authorization") String token)
       throws CallNotFoundException, UserNotExistException {
-    List<MostCalledDto> mostCalledDtoList = callController.findMostCalledCities(sessionManager.getCurrentUser(token).getId());
+    List<MostCalled> mostCalledDtoList = callController.findMostCalledCities(sessionManager.getCurrentUser(token).getId());
     return mostCalledDtoList.isEmpty()
         ? ResponseEntity.noContent().build() :
         ResponseEntity.ok(mostCalledDtoList);

@@ -56,17 +56,6 @@ public class LoginControllerTest {
     ResponseEntity responseEntity = loginController.login(loginDto);
   }
 
-  @Test(expected = InvalidLoginException.class)
-  public void testLoginThenThrowInvalidLogin()
-      throws ValidationException, NoSuchAlgorithmException, UserNotExistException, InvalidLoginException {
-    LoginDto loginRequestDto = LoginDto.builder()
-        .username("test")
-        .password("test")
-        .build();
-    when(userController.login(loginRequestDto.getUsername(), loginRequestDto.getPassword()))
-        .thenThrow(new UserNotExistException());
-    loginController.login(loginRequestDto);
-  }
 
   @Test(expected = ValidationException.class)
   public void testLoginThenWithInvalidUsernamePassword()

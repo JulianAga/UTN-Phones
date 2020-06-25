@@ -2,7 +2,7 @@ package com.utn.phones.controllers;
 
 import com.utn.phones.dto.BetweenDatesDto;
 import com.utn.phones.dto.CallRequestDto;
-import com.utn.phones.dto.MostCalledDto;
+import com.utn.phones.projections.MostCalled;
 import com.utn.phones.exceptions.callExceptions.CallNotFoundException;
 import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
@@ -11,6 +11,8 @@ import com.utn.phones.services.CallService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.springframework.data.projection.ProjectionFactory;
+import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,26 +31,29 @@ public class CallControllerTest {
   private CallService callService;
 
   private CallController callController;
+  private MostCalled mostCalledProjection;
+  private List<MostCalled> mostCalledList;
 
   @Before
   public void setUp() {
     initMocks(this);
     callController = new CallController(callService);
+    ProjectionFactory factory= new SpelAwareProxyProjectionFactory();
+    this.mostCalledProjection= factory.createProjection(MostCalled.class);
+    mostCalledProjection.setCant(2);
+    mostCalledProjection.setCityName("Mar del Plata");
+    mostCalledList= Collections.singletonList(mostCalledProjection);
   }
 
   @Test
   public void testFindMostCalledCities() throws CallNotFoundException {
 
-      List<MostCalledDto> mostCalledDtos = new ArrayList<>();
-      MostCalledDto mostCalledDto = new MostCalledDto("test1", 3);
-      mostCalledDtos.add(mostCalledDto);
-
-      when(callService.findMostCalledCities(1)).thenReturn(mostCalledDtos);
+      when(callService.findMostCalledCities(1)).thenReturn(mostCalledList);
     try {
-      List<MostCalledDto> mostCalledDtos2 = callController.findMostCalledCities(1);
+      List<MostCalled> mostCalledDtos = callController.findMostCalledCities(1);
 
-      assertEquals(1, mostCalledDtos2.size());
-      assertEquals(mostCalledDto, mostCalledDtos.get(0));
+      assertEquals(1, mostCalledDtos.size());
+      assertEquals(mostCalledList.get(0), mostCalledDtos.get(0));
       verify(callService, times(1)).findMostCalledCities(1);
     } catch (CallNotFoundException ex) {
       fail();
@@ -121,7 +126,7 @@ public class CallControllerTest {
   @Test(expected = CallNotFoundException.class)
   public void findMostCalledNotClientFoundTest() throws CallNotFoundException {
     when(callService.findMostCalledCities(1)).thenThrow(new CallNotFoundException());
-    List<MostCalledDto> mostCalledDtos = callController.findMostCalledCities(1);
+    List<MostCalled> mostCalledDtos = callController.findMostCalledCities(1);
   }
 
   @Test(expected = ClientNotFoundException.class)

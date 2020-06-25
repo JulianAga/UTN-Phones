@@ -11,7 +11,7 @@ import com.utn.phones.controllers.BillController;
 import com.utn.phones.controllers.CallController;
 import com.utn.phones.controllers.ClientController;
 import com.utn.phones.dto.BetweenDatesDto;
-import com.utn.phones.dto.MostCalledDto;
+import com.utn.phones.projections.MostCalled;
 import com.utn.phones.exceptions.callExceptions.CallNotFoundException;
 import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
@@ -30,6 +30,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.springframework.data.projection.ProjectionFactory;
+import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -48,6 +50,8 @@ public class ClientWebControllerTest {
   CallController callController;
 
   ClientWebController clientWebController;
+  private MostCalled mostCalledProjection;
+  private List<MostCalled> mostCalledList;
 
   Client client = new Client();
 
@@ -58,28 +62,29 @@ public class ClientWebControllerTest {
         sessionManager);
     client = new Client(1, "123", "foo", "foo", "foo", "foo", new City(),
         UserType.builder().id(2).build(), true, null);
+    ProjectionFactory factory= new SpelAwareProxyProjectionFactory();
+    this.mostCalledProjection= factory.createProjection(MostCalled.class);
+    mostCalledProjection.setCant(2);
+    mostCalledProjection.setCityName("Mar del Plata");
+    mostCalledList= Collections.singletonList(mostCalledProjection);
   }
 
   @Test
   public void findCallsFromClientTest()
       throws CallNotFoundException, UserNotExistException {
 
-    MostCalledDto mostCalledDto1 = MostCalledDto.builder().cityName("chivilcoy").cant(123).build();
-    MostCalledDto mostCalledDto2 = MostCalledDto.builder().cityName("chascomus").cant(121).build();
-
-    List<MostCalledDto> mostCalledDtos = Arrays.asList(mostCalledDto1, mostCalledDto2);
     String token = sessionManager.createSession(client);
     //devuelvo el cliente cuando se pide el token
     when(sessionManager.getCurrentUser(token)).thenReturn(client);
 
     when(callController
         .findMostCalledCities(1))
-        .thenReturn(mostCalledDtos);
+        .thenReturn(mostCalledList);
 
-    ResponseEntity<List<MostCalledDto>> mostCalledDto = clientWebController
+    ResponseEntity<List<MostCalled>> mostCalledDto = clientWebController
         .findCallFromClient(token);
 
-    assertEquals(mostCalledDto.getBody().size(), mostCalledDtos.size());
+    assertEquals(mostCalledDto.getBody().size(), mostCalledList.size());
     verify(callController, times(1)).findMostCalledCities(1);
   }
 

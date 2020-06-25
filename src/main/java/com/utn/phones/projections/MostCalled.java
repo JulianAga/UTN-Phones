@@ -2,7 +2,11 @@ package com.utn.phones.projections;
 
 public interface MostCalled {
 
-  String getCityName();
+    String getCityName();
 
-  Integer getCant();
+    Integer getCant();
+
+    void setCityName(String cityName);
+
+    void setCant(Integer cant);
 }

@@ -30,8 +30,7 @@ public class AntennaWebController {
 
   //Agregado de llamadas
   @PostMapping("/call")
-  public ResponseEntity<URI> saveCall(@RequestHeader String token,
-      @RequestBody CallRequestDto callRequestDto) {
+  public ResponseEntity<?> saveCall( @RequestHeader("Authorization") String token, @RequestBody CallRequestDto callRequestDto) {
     return ResponseEntity
         .created(RestUtils.getCallLocation(this.callController.save(callRequestDto))).build();
   }

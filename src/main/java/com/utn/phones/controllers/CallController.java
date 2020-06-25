@@ -2,7 +2,7 @@ package com.utn.phones.controllers;
 
 import com.utn.phones.dto.BetweenDatesDto;
 import com.utn.phones.dto.CallRequestDto;
-import com.utn.phones.dto.MostCalledDto;
+import com.utn.phones.projections.MostCalled;
 import com.utn.phones.exceptions.callExceptions.CallNotFoundException;
 import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
@@ -26,7 +26,7 @@ public class CallController {
     this.callService = callService;
   }
 
-  public List<MostCalledDto> findMostCalledCities(@PathVariable Integer id)
+  public List<MostCalled> findMostCalledCities(@PathVariable Integer id)
       throws CallNotFoundException {
     return callService.findMostCalledCities(id);
   }

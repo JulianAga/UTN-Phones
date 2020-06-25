@@ -13,9 +13,7 @@ import lombok.Data;
 public class BetweenDatesDto {
 
   @JsonProperty
-  @JsonFormat(pattern = "dd-MM-yyyy")
   private LocalDate start;
   @JsonProperty
-  @JsonFormat(pattern = "dd-MM-yyyy")
   private LocalDate end;
 }

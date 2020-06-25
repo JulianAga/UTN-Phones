@@ -66,7 +66,6 @@ public class PhoneLineService {
   public PhoneLine update(PhoneLineDto phoneLineDto, Integer id)
       throws PhoneLineNotExists {
     PhoneLine phoneLine = this.findById(id);
-    phoneLine.setNumber(phoneLineDto.getNumber());
     phoneLine.setSuspended(phoneLineDto.getSuspended());
     return this.phoneLineRepository.save(phoneLine);
   }
