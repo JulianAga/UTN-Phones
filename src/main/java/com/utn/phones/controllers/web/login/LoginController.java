@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 @RequestMapping("")
 public class LoginController {
@@ -32,20 +31,12 @@ public class LoginController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<?> login(@RequestBody LoginDto loginDto)
-      throws InvalidLoginException, NoSuchAlgorithmException, ValidationException {
-    ResponseEntity<?> response;
-    try {
-      User user = userController.login(loginDto.getUsername(), loginDto.getPassword());
-
-      String token = sessionManager.createSession(user);
-      response = ResponseEntity.ok().headers(createHeaders(token)).build();
-    } catch (UserNotExistException e) {
-      throw new InvalidLoginException();
-    }
-    return response;
+  public ResponseEntity<String> login(@RequestBody LoginDto loginDto)
+      throws UserNotExistException, ValidationException, NoSuchAlgorithmException {
+    User user = userController.login(loginDto.getUsername(), loginDto.getPassword());
+    String token = sessionManager.createSession(user);
+    return ResponseEntity.ok(token);
   }
-
 
   @PostMapping("/logout")
   public ResponseEntity logout(@RequestHeader("Authorization") String token) {
