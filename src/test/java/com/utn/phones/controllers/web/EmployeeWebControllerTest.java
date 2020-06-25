@@ -23,6 +23,7 @@ import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
 import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.exceptions.generalExceptions.ResourceAlreadyExistException;
+import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineAlreadyExists;
 import com.utn.phones.exceptions.phoneLinesExceptions.PhoneLineNotExists;
 import com.utn.phones.model.Bill;
@@ -34,7 +35,9 @@ import com.utn.phones.model.Tariff;
 import com.utn.phones.model.UserType;
 import com.utn.phones.restUtils.RestUtils;
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +49,7 @@ import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @RunWith(PowerMockRunner.class)
@@ -112,7 +116,7 @@ public class EmployeeWebControllerTest {
 
   @Test
   public void updateClientTest()
-      throws ClientNotFoundException, CityNotFoundException, ResourceAlreadyExistException {
+      throws ClientNotFoundException, CityNotFoundException, ResourceAlreadyExistException, NoSuchAlgorithmException {
     UserRequestDto userRequestDto = new UserRequestDto("123", "foo", "foo", "foo", "foo", 1);
     ;
     Client testClient = new Client(1, "123", "foo", "foo", "foo", "foo", new City(),
@@ -297,7 +301,7 @@ public class EmployeeWebControllerTest {
 
   @Test(expected = ClientNotFoundException.class)
   public void updateClientNotFound()
-      throws ClientNotFoundException, ResourceAlreadyExistException, CityNotFoundException {
+      throws ClientNotFoundException, ResourceAlreadyExistException, CityNotFoundException, NoSuchAlgorithmException {
     when(clientController.update(1, UserRequestDto.builder().build()))
         .thenThrow(new ClientNotFoundException());
     employeeWebController.updateClient("aaa", UserRequestDto.builder().build(), 1);
@@ -305,7 +309,7 @@ public class EmployeeWebControllerTest {
 
   @Test(expected = ResourceAlreadyExistException.class)
   public void updateClientAlreadyExist()
-      throws ClientNotFoundException, ResourceAlreadyExistException, CityNotFoundException {
+      throws ClientNotFoundException, ResourceAlreadyExistException, CityNotFoundException, NoSuchAlgorithmException {
     when(clientController.update(1, UserRequestDto.builder().build()))
         .thenThrow(new ResourceAlreadyExistException());
     employeeWebController.updateClient("aaa", UserRequestDto.builder().build(), 1);
@@ -313,7 +317,7 @@ public class EmployeeWebControllerTest {
 
   @Test(expected = CityNotFoundException.class)
   public void updateClientCityNotFound()
-      throws ClientNotFoundException, ResourceAlreadyExistException, CityNotFoundException {
+      throws ClientNotFoundException, ResourceAlreadyExistException, CityNotFoundException, NoSuchAlgorithmException {
     when(clientController.update(1, UserRequestDto.builder().build()))
         .thenThrow(new CityNotFoundException());
     employeeWebController.updateClient("aaa", UserRequestDto.builder().build(), 1);
@@ -324,5 +328,32 @@ public class EmployeeWebControllerTest {
     when(clientController.findById(1))
         .thenThrow(new ClientNotFoundException());
     employeeWebController.findClient("aaa", 1);
+  }
+
+  @Test
+  public void testGetBillsFromUserNoContent()
+      throws UserNotExistException, InvalidDateException {
+    List<Bill> bills = new ArrayList<>();
+    BetweenDatesDto betweenDatesDto = BetweenDatesDto.builder().build();
+    when(this.billController.findBetweenDates(1, betweenDatesDto)).thenReturn(bills);
+
+    ResponseEntity<?> billsTest = this.employeeWebController
+        .getBillsByUser("111", 1, betweenDatesDto);
+
+    Assert.assertEquals(HttpStatus.NO_CONTENT, billsTest.getStatusCode());
+  }
+
+  @Test
+  public void testGetCallsFromUserNoContent()
+      throws UserNotExistException, InvalidDateException, ClientNotFoundException {
+    List<Call> calls = new ArrayList<>();
+    BetweenDatesDto betweenDatesDto = BetweenDatesDto.builder().build();
+    when(this.callController.findCallsFromClient(1)).thenReturn(calls);
+
+    ResponseEntity<?> callsTest = this.employeeWebController
+        .getCallsByUser("111", 1);
+
+    Assert.assertEquals(HttpStatus.NO_CONTENT, callsTest.getStatusCode());
+
   }
 }

@@ -23,6 +23,7 @@ import com.utn.phones.model.PhoneLine;
 import com.utn.phones.model.Tariff;
 import com.utn.phones.restUtils.RestUtils;
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -144,7 +145,7 @@ public class EmployeeWebController {
   public ResponseEntity<Client> updateClient(@RequestHeader("Authorization") String token,
       @RequestBody UserRequestDto client,
       @PathVariable Integer id)
-      throws ClientNotFoundException, CityNotFoundException, ResourceAlreadyExistException {
+      throws ClientNotFoundException, CityNotFoundException, ResourceAlreadyExistException, NoSuchAlgorithmException {
     return ResponseEntity.ok(this.clientController.update(id, client));
   }
 

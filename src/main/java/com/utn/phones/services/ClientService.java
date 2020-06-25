@@ -56,19 +56,16 @@ public class ClientService {
   }
 
   public Client update(Integer id, UserRequestDto userRequestDto)
-      throws ResourceAlreadyExistException, CityNotFoundException, ClientNotFoundException {
+      throws CityNotFoundException, ClientNotFoundException, NoSuchAlgorithmException, ResourceAlreadyExistException {
     Client client = this.findById(id);
     client.setCity(cityService.findById(userRequestDto.getCity()));
-    try {
-      client.setSurname(userRequestDto.getSurname());
-      client.setPassword(hashPassword(userRequestDto.getPassword()));
-      client.setName(userRequestDto.getName());
-      client.setDNI(userRequestDto.getDni());
-      client.setUsername(userRequestDto.getUsername());
-      return this.clientRepository.save(client);
-    } catch (Exception e) {
-      throw new ResourceAlreadyExistException();
-    }
+    client.setSurname(userRequestDto.getSurname());
+    client.setPassword(hashPassword(userRequestDto.getPassword()));
+    client.setName(userRequestDto.getName());
+    client.setDNI(userRequestDto.getDni());
+    client.setUsername(userRequestDto.getUsername());
+
+    return this.clientRepository.save(client);
   }
 
   public void deleteById(Integer id) throws ClientNotFoundException {

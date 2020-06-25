@@ -32,12 +32,20 @@ public class LoginController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<String> login(@RequestBody LoginDto loginDto)
-      throws UserNotExistException, ValidationException, NoSuchAlgorithmException {
-    User user = userController.login(loginDto.getUsername(), loginDto.getPassword());
-    String token = sessionManager.createSession(user);
-    return ResponseEntity.ok(token);
+  public ResponseEntity<?> login(@RequestBody LoginDto loginDto)
+      throws InvalidLoginException, NoSuchAlgorithmException, ValidationException {
+    ResponseEntity<?> response;
+    try {
+      User user = userController.login(loginDto.getUsername(), loginDto.getPassword());
+
+      String token = sessionManager.createSession(user);
+      response = ResponseEntity.ok().headers(createHeaders(token)).build();
+    } catch (UserNotExistException e) {
+      throw new InvalidLoginException();
+    }
+    return response;
   }
+
 
   @PostMapping("/logout")
   public ResponseEntity logout(@RequestHeader("Authorization") String token) {

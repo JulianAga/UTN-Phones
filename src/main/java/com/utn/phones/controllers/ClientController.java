@@ -7,6 +7,7 @@ import com.utn.phones.exceptions.generalExceptions.ResourceAlreadyExistException
 import com.utn.phones.model.Client;
 import com.utn.phones.model.PhoneLine;
 import com.utn.phones.services.ClientService;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class ClientController {
   }
 
   public Client update(Integer id, UserRequestDto client)
-      throws ClientNotFoundException, CityNotFoundException, ResourceAlreadyExistException {
+      throws ClientNotFoundException, CityNotFoundException, ResourceAlreadyExistException, NoSuchAlgorithmException {
     return this.clientService.update(id, client);
   }
 

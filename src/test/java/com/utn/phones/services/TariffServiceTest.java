@@ -10,6 +10,7 @@ import com.utn.phones.repositories.TariffRepository;
 import java.util.Arrays;
 import java.util.List;
 
+import java.util.Optional;
 import org.junit.Assert;
 import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,11 +58,9 @@ public class TariffServiceTest {
 
     @Test(expected = CityNotFoundException.class)
     public void testFindAllWithException() throws CityNotFoundException {
-        String s1= new String();
-        String s2= new String();
-        when(this.tariffRepository.findByOriginCityNameAndDestinyCityName(null, null));
+        when(this.tariffRepository.findByOriginCityNameAndDestinyCityName("", "")).thenReturn(null);
 
-        this.tariffService.findAll(s1,s2);
+        this.tariffService.findAll("","");
     }
 
 }

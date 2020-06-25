@@ -4,6 +4,7 @@ import com.utn.phones.exceptions.cityExceptions.CityNotFoundException;
 import com.utn.phones.model.Tariff;
 import com.utn.phones.repositories.TariffRepository;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +24,11 @@ public class TariffService {
    */
   public List<Tariff> findAll(String originName, String destinyName) throws CityNotFoundException {
     if (originName != null && destinyName != null) {
-      try {
-        return this.tariffRepository
-            .findByOriginCityNameAndDestinyCityName(originName, destinyName);
-      }catch (Exception c){
-        throw new CityNotFoundException();
-      }
+
+      return Optional.ofNullable(this.tariffRepository
+          .findByOriginCityNameAndDestinyCityName(originName, destinyName))
+          .orElseThrow(CityNotFoundException::new);
+
     }
     return this.tariffRepository.findAll();
   }

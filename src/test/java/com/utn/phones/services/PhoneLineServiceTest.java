@@ -76,12 +76,13 @@ public class PhoneLineServiceTest {
 
   }
 
-  @Test(expected = Exception.class)
+  @Test(expected = PhoneLineAlreadyExists.class)
   public void saveTestWithError() throws PhoneLineAlreadyExists, ClientNotFoundException {
     PhoneLine testPhoneLine = new PhoneLine(1, "123", new LineType(), new Client(), false, true);
     PhoneLineDto phoneLineDto = PhoneLineDto.builder().number("").build();
 
-    when(phoneLineRepository.save(testPhoneLine)).thenThrow(new PhoneLineAlreadyExists());
+    when(phoneLineRepository.findByNumber(phoneLineDto.getNumber())).thenReturn(testPhoneLine);
+
     phoneLineService.save(phoneLineDto, 1);
   }
 
@@ -121,6 +122,13 @@ public class PhoneLineServiceTest {
     when(phoneLineRepository.save(phoneLineTest)).thenReturn(phoneLineTest);
     when(phoneLineService.update(phoneLineDto, 1))
         .thenThrow(PhoneLineNotExists.class);
+  }
+
+  @Test
+  public void deleteByIdTest() throws PhoneLineNotExists {
+    PhoneLine phoneLine = PhoneLine.builder().id(1).build();
+    when(phoneLineRepository.findById(1)).thenReturn(Optional.ofNullable(phoneLine));
+    phoneLineService.deleteById(1);
   }
 
 }

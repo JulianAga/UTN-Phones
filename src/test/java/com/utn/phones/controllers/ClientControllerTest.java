@@ -16,6 +16,7 @@ import com.utn.phones.model.Client;
 import com.utn.phones.model.PhoneLine;
 import com.utn.phones.model.UserType;
 import com.utn.phones.services.ClientService;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -81,7 +82,7 @@ public class ClientControllerTest {
 
   @Test
   public void updateTest()
-      throws ClientNotFoundException, CityNotFoundException, ResourceAlreadyExistException {
+      throws ClientNotFoundException, CityNotFoundException, ResourceAlreadyExistException, NoSuchAlgorithmException {
     UserRequestDto userRequestDto = new UserRequestDto("123", "foo", "foo", "foo", "foo", 1);
     ;
     Client testClient = new Client(1, "123", "foo", "foo", "foo", "foo", new City(),

@@ -13,6 +13,7 @@ import com.utn.phones.controllers.ClientController;
 import com.utn.phones.dto.BetweenDatesDto;
 import com.utn.phones.dto.MostCalledDto;
 import com.utn.phones.exceptions.callExceptions.CallNotFoundException;
+import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.exceptions.loginExceptions.UserNotExistException;
 import com.utn.phones.model.Bill;
@@ -21,12 +22,15 @@ import com.utn.phones.model.City;
 import com.utn.phones.model.Client;
 import com.utn.phones.model.UserType;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class ClientWebControllerTest {
@@ -122,5 +126,50 @@ public class ClientWebControllerTest {
     assertEquals(callsReturned.getBody().get(0).getId(), calls.get(0).getId());
     verify(callController, times(2)).findBetweenDates(betweenDatesDto, 1);
   }
+
+
+  @Test
+  public void testFindCallsFromClientNoContent()
+      throws ClientNotFoundException, UserNotExistException, CallNotFoundException {
+    List<Call> calls = new ArrayList<>();
+    when(this.callController.findCallsFromClient(client.getId())).thenReturn(calls);
+    when(this.sessionManager.getCurrentUser("token")).thenReturn(client);
+
+    ResponseEntity<?> callsFromClientTest = this.clientWebController.findCallFromClient("token");
+
+    Assert.assertEquals(HttpStatus.NO_CONTENT, callsFromClientTest.getStatusCode());
+
+  }
+
+  @Test
+  public void testFindBillBetweenDatesNoContent()
+      throws UserNotExistException, CallNotFoundException, InvalidDateException {
+    List<Bill> bills = new ArrayList<>();
+    BetweenDatesDto betweenDatesDto = BetweenDatesDto.builder().build();
+    when(this.billController.findBetweenDates(client.getId(), betweenDatesDto)).thenReturn(bills);
+    when(this.sessionManager.getCurrentUser("token")).thenReturn(client);
+
+    ResponseEntity<?> billsFromClientTest = this.clientWebController
+        .findBillBetweenDates("token", betweenDatesDto);
+
+    Assert.assertEquals(HttpStatus.NO_CONTENT, billsFromClientTest.getStatusCode());
+
+  }
+
+  @Test
+  public void testFindBillsFromClientNoContent()
+      throws UserNotExistException, CallNotFoundException, InvalidDateException {
+    List<Bill> bills = new ArrayList<>();
+    BetweenDatesDto betweenDatesDto = BetweenDatesDto.builder().build();
+    when(this.billController.findBetweenDates(client.getId(), betweenDatesDto)).thenReturn(bills);
+    when(this.sessionManager.getCurrentUser("token")).thenReturn(client);
+
+    ResponseEntity<?> billsFromClientTest = this.clientWebController
+        .findBillBetweenDates("token", betweenDatesDto);
+
+    Assert.assertEquals(HttpStatus.NO_CONTENT, billsFromClientTest.getStatusCode());
+
+  }
+
 
 }

@@ -8,6 +8,7 @@ import com.utn.phones.exceptions.clientExceptions.ClientNotFoundException;
 import com.utn.phones.exceptions.dateExceptions.InvalidDateException;
 import com.utn.phones.model.Call;
 import com.utn.phones.repositories.CallRepository;
+import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -33,6 +34,15 @@ public class CallServiceTest {
     public void setUp() {
         initMocks(this);
         callService = new CallService(callRepository);
+    }
+
+    @Test
+    public void testFindAll(){
+        Call call = Call.builder().id(1).build();
+        List<Call> calls = Collections.singletonList(call);
+        when(callRepository.findAll()).thenReturn(calls);
+        List<Call> callList = callService.findAll();
+        assertEquals(callList.get(0).getId(),calls.get(0).getId());
     }
 
     @Test
@@ -137,5 +147,7 @@ public class CallServiceTest {
         when(callRepository.findAllByOriginLineClientIdAndDateBetween(1, betweenDatesDto.getStart(), betweenDatesDto.getEnd())).thenThrow(new InvalidDateException());
         List<Call> callList = callService.findBetweenDates(1, betweenDatesDto);
     }
+
+
 
 }
