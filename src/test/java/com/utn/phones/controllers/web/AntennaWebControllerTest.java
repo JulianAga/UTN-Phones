@@ -8,6 +8,7 @@ import com.utn.phones.dto.CallRequestDto;
 import com.utn.phones.model.Call;
 import com.utn.phones.restUtils.RestUtils;
 import java.net.URI;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.Assert;
@@ -42,7 +43,7 @@ public class AntennaWebControllerTest {
   }
 
   @Test
-  public void saveCallOk() {
+  public void saveCallOk(){
     CallRequestDto callRequestDto = CallRequestDto.builder().originNumber("123")
         .destinyNumber("321").date(LocalDate.now())
         .duration(30).build();

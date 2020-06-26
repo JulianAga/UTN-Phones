@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -118,7 +119,7 @@ public class CallServiceTest {
     }
 
     @Test
-    public void saveTest(){
+    public void saveTest() {
         CallRequestDto callRequestDto = new CallRequestDto("", "", 12, LocalDate.now());
         Call call = Call.builder().bill(null).costPrice(null).date(callRequestDto.getDate())
                 .destinyCity(null).destinyLine(null).destinyNumber(callRequestDto.getDestinyNumber()).duration(callRequestDto.getDuration())

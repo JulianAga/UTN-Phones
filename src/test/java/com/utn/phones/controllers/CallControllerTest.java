@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -109,7 +110,7 @@ public class CallControllerTest {
   }
 
   @Test
-  public void saveTest(){
+  public void saveTest() {
     Call testCall = new Call(1, 12, null, null, null, null, null, null, null,
         null, null, null);
     CallRequestDto callRequestDto = new CallRequestDto("", "", 12, LocalDate.now());

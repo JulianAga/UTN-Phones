@@ -129,7 +129,7 @@ public class EmployeeWebController {
       @RequestBody UserRequestDto client)
       throws CityNotFoundException, ResourceAlreadyExistException {
     URI uri = RestUtils.getClientLocation(this.clientController.save(client));
-    return ResponseEntity.created(uri).body(uri.toString());
+    return ResponseEntity.created(uri).build();
   }
 
   //Baja de cliente
