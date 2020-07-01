@@ -38,9 +38,9 @@ public class ClientControllerTest {
   @Test
   public void testFindAll() {
 
-    Client client = new Client(1, "dwad", "sad", "ad", "dad", "sad", new City(),
+    Client client = new Client(1, "test", "test", "test", "test", "test", new City(),
         null, null, null);
-    Client client2 = new Client(2, "carlos", "asd", "asd", "sad", "sad", new City(),
+    Client client2 = new Client(2, "test", "test", "test", "test", "test", new City(),
         new UserType(), true, null);
 
     List<Client> clientListTest = Arrays.asList(client, client2);
